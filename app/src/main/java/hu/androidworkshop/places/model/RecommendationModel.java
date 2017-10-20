@@ -5,11 +5,11 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class RecommendationResponseModel {
+public class RecommendationModel {
 
-    public static final String TAG = RecommendationResponseModel.class.getSimpleName();
+    public static final String TAG = RecommendationModel.class.getSimpleName();
 
-    private String id;
+    private Integer id;
 
     private String name;
 
@@ -17,15 +17,15 @@ public class RecommendationResponseModel {
 
     private String imageURL;
 
-    private UserResponseModel user;
+    private UserModel user;
 
     private Boolean liked;
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public RecommendationResponseModel setId(String id) {
+    public RecommendationModel setId(Integer id) {
         this.id = id;
         return this;
     }
@@ -34,7 +34,7 @@ public class RecommendationResponseModel {
         return name;
     }
 
-    public RecommendationResponseModel setName(String name) {
+    public RecommendationModel setName(String name) {
         this.name = name;
         return this;
     }
@@ -43,7 +43,7 @@ public class RecommendationResponseModel {
         return shortDescription;
     }
 
-    public RecommendationResponseModel setShortDescription(String shortDescription) {
+    public RecommendationModel setShortDescription(String shortDescription) {
         this.shortDescription = shortDescription;
         return this;
     }
@@ -52,16 +52,16 @@ public class RecommendationResponseModel {
         return imageURL;
     }
 
-    public RecommendationResponseModel setImageURL(String imageURL) {
+    public RecommendationModel setImageURL(String imageURL) {
         this.imageURL = imageURL;
         return this;
     }
 
-    public UserResponseModel getUser() {
+    public UserModel getUser() {
         return user;
     }
 
-    public RecommendationResponseModel setUser(UserResponseModel user) {
+    public RecommendationModel setUser(UserModel user) {
         this.user = user;
         return this;
     }
@@ -70,15 +70,17 @@ public class RecommendationResponseModel {
         return liked;
     }
 
-    public RecommendationResponseModel setLiked(Boolean liked) {
+    public RecommendationModel setLiked(Boolean liked) {
         this.liked = liked;
         return this;
     }
 
-    public RecommendationResponseModel(JSONObject jsonObject) {
+    public RecommendationModel() {}
+
+    public RecommendationModel(JSONObject jsonObject) {
         try {
             if (jsonObject.has("id")) {
-                id = jsonObject.getString("id");
+                id = Integer.parseInt(jsonObject.getString("id"));
             }
             if (jsonObject.has("name")) {
                 name = jsonObject.getString("name");
@@ -90,7 +92,7 @@ public class RecommendationResponseModel {
                 imageURL = jsonObject.getString("image-url");
             }
             if (jsonObject.has("user")) {
-                user = new UserResponseModel(jsonObject.getJSONObject("user"));
+                user = new UserModel(jsonObject.getJSONObject("user"));
             }
             if (jsonObject.has("liked")) {
                 liked = jsonObject.getBoolean("liked");
@@ -105,7 +107,7 @@ public class RecommendationResponseModel {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        RecommendationResponseModel that = (RecommendationResponseModel) o;
+        RecommendationModel that = (RecommendationModel) o;
 
         if (!id.equals(that.id)) return false;
         if (!name.equals(that.name)) return false;
@@ -128,7 +130,7 @@ public class RecommendationResponseModel {
 
     @Override
     public String toString() {
-        return "RecommendationResponseModel{" +
+        return "RecommendationModel{" +
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", shortDescription='" + shortDescription + '\'' +

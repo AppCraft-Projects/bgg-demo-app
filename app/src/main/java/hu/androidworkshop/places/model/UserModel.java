@@ -5,14 +5,16 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-class UserResponseModel {
-    public static final String TAG = UserResponseModel.class.getSimpleName();
+public class UserModel {
+    public static final String TAG = UserModel.class.getSimpleName();
 
     private String firstName;
 
     private String lastName;
 
-    public UserResponseModel(JSONObject jsonObject) {
+    public UserModel() {}
+
+    public UserModel(JSONObject jsonObject) {
         try {
             if (jsonObject.has("first-name")) {
                 firstName = jsonObject.getString("first-name");
@@ -29,7 +31,7 @@ class UserResponseModel {
         return firstName;
     }
 
-    public UserResponseModel setFirstName(String firstName) {
+    public UserModel setFirstName(String firstName) {
         this.firstName = firstName;
         return this;
     }
@@ -38,7 +40,7 @@ class UserResponseModel {
         return lastName;
     }
 
-    public UserResponseModel setLastName(String lastName) {
+    public UserModel setLastName(String lastName) {
         this.lastName = lastName;
         return this;
     }
@@ -48,7 +50,7 @@ class UserResponseModel {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        UserResponseModel that = (UserResponseModel) o;
+        UserModel that = (UserModel) o;
 
         if (!firstName.equals(that.firstName)) return false;
         return lastName.equals(that.lastName);
@@ -63,7 +65,7 @@ class UserResponseModel {
 
     @Override
     public String toString() {
-        return "UserResponseModel{" +
+        return "UserModel{" +
                 "firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 '}';

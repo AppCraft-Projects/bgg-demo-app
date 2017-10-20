@@ -5,22 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/app_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/colorPrimary"
-        android:elevation="4dp"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        app:title="@string/nearby_title"
-        app:titleTextColor="#FFFFFF">
-    </android.support.v7.widget.Toolbar>
-
     <ListView
         android:id="@+id/places_listview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        >
     </ListView>
 
     <android.support.design.widget.FloatingActionButton
@@ -28,8 +17,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
-        android:backgroundTint="@color/colorPrimary"
         android:src="@drawable/ic_add_white_24dp"
+        app:backgroundTint="@color/colorPrimary"
         app:layout_anchor="@id/places_listview"
         app:layout_anchorGravity="bottom|end|right"/>
 

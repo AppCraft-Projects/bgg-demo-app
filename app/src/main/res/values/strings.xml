@@ -2,4 +2,7 @@
     <string name="app_name">Budapest Gourmet Guide</string>
     <string name="nearby_title">Nearby</string>
     <string name="title_activity_map">Map</string>
+    <string name="loading_text">Loading...</string>
+    <string name="details_button_title">Részletek</string>
+    <string name="detail_activity_title">Detail</string>
 </resources>

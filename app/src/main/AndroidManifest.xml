@@ -37,7 +37,12 @@
 
         <activity
             android:name="hu.androidworkshop.activity.MapActivity"
-            android:label="@string/title_activity_map"></activity>
+            android:label="@string/title_activity_map"/>
+        <activity
+            android:name="hu.androidworkshop.activity.RecommendationDetailActivity"
+            android:label="@string/detail_activity_title"
+            android:parentActivityName="hu.androidworkshop.activity.NearbyActivity">
+        </activity>
     </application>
 
 </manifest>
