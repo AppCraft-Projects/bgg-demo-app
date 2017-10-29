@@ -99,7 +99,7 @@ public class RecommendationDatabaseHelper extends SQLiteOpenHelper {
             Integer liked = recommendationModel.getLiked() ? 1 : 0;
             contentValues.put(KEY_RECOMMENDATION_LIKED, liked);
 
-            database.insertOrThrow(TABLE_RECOMMENDATIONS, null, contentValues);
+            database.insertWithOnConflict(TABLE_RECOMMENDATIONS, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
             database.setTransactionSuccessful();
         } catch (Exception e) {
             Log.e(TAG, "Error occured while saving recommendation", e);
@@ -199,5 +199,43 @@ public class RecommendationDatabaseHelper extends SQLiteOpenHelper {
             database.endTransaction();
         }
         return userId;
+    }
+
+    public RecommendationModel getRecommendationById(int id) {
+        RecommendationModel recommendationModel = null;
+
+        String query =
+                String.format("SELECT * FROM %s LEFT OUTER JOIN %s ON %s.%s=%s.%s WHERE %s.%s = ?",
+                        TABLE_RECOMMENDATIONS,
+                        TABLE_USERS,
+                        TABLE_RECOMMENDATIONS, KEY_RECOMMENDATION_USER_ID,
+                        TABLE_USERS, KEY_USER_ID,
+                        TABLE_USERS, KEY_USER_ID
+                );
+        Cursor cursor = getReadableDatabase().rawQuery(query, new String[]{String.valueOf(id)});
+
+        try {
+            if (cursor.moveToFirst()) {
+                UserModel userModel =
+                        new UserModel()
+                                .setFirstName(cursor.getString(cursor.getColumnIndex(KEY_USER_FIRST_NAME)))
+                                .setLastName(cursor.getString(cursor.getColumnIndex(KEY_USER_LAST_NAME)));
+                recommendationModel =
+                        new RecommendationModel()
+                                .setId(cursor.getInt(cursor.getColumnIndex(KEY_RECOMMENDATION_ID)))
+                                .setImageURL(cursor.getString(cursor.getColumnIndex(KEY_RECOMMENDATION_IMAGE_URL)))
+                                .setUser(userModel)
+                                .setLiked(cursor.getInt(cursor.getColumnIndex(KEY_RECOMMENDATION_LIKED)) != 0)
+                                .setName(cursor.getString(cursor.getColumnIndex(KEY_RECOMMENDATION_NAME)))
+                                .setShortDescription(cursor.getString(cursor.getColumnIndex(KEY_RECOMMENDATION_SHORT_DESCRIPTION)));
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error while fetching database");
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return recommendationModel;
     }
 }

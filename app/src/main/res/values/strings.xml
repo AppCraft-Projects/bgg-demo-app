@@ -5,4 +5,5 @@
     <string name="loading_text">Loading...</string>
     <string name="details_button_title">Részletek</string>
     <string name="detail_activity_title">Detail</string>
+    <string name="title_edit">Compose</string>
 </resources>

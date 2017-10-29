@@ -6,13 +6,15 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -39,6 +41,7 @@ public class NearbyActivity extends AppCompatActivity {
     public static final String RECOMMENDATION_ID_KEY_BUNDLE = "RECOMMENDATION_ID_KEY_BUNDLE";
 
     private ListView listView;
+    private FloatingActionButton addButton;
     private ArrayAdapter<RecommendationModel> adapter;
     private RecommendationDatabaseHelper databaseHelper;
 
@@ -53,6 +56,14 @@ public class NearbyActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nearby);
         setTitle(R.string.nearby_title);
+        addButton = findViewById(R.id.add_recommendation_button);
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(AddRecommendationActivity.newIntent(NearbyActivity.this));
+            }
+        });
+
         databaseHelper = RecommendationDatabaseHelper.getInstance(this);
         listView = findViewById(R.id.places_listview);
 
@@ -64,33 +75,6 @@ public class NearbyActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
 
         listView.setAdapter(adapter);
-
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.d(TAG, String.format("Item clicked: %s", adapter.getItem(position).getName()));
-                Intent intent = RecommendationDetailActivity.newIntent(NearbyActivity.this);
-                Bundle bundle = new Bundle();
-                bundle.putInt(RECOMMENDATION_ID_KEY_BUNDLE, adapter.getItem(position).getId());
-                startActivity(intent, bundle);
-            }
-        });
-        listView.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Log.d(TAG, String.format("Item selected: %s", adapter.getItem(position).getName()));
-                Intent intent = RecommendationDetailActivity.newIntent(NearbyActivity.this);
-                Bundle bundle = new Bundle();
-                bundle.putInt(RECOMMENDATION_ID_KEY_BUNDLE, adapter.getItem(position).getId());
-                startActivity(intent, bundle);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
     }
 
     @Override
@@ -111,6 +95,12 @@ public class NearbyActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         new GetRecomendationTask(this).execute(null, null);
+    }
+
+    public void itemClicked(RecommendationModel recommendation, View view) {
+        Intent intent = RecommendationDetailActivity.newIntent(this);
+        intent.putExtra(RECOMMENDATION_ID_KEY_BUNDLE, recommendation.getId());
+        ActivityCompat.startActivity(this, intent, null);
     }
 
     public class GetRecomendationTask extends AsyncTask<Void,Void,List<RecommendationModel>> {
@@ -145,7 +135,7 @@ public class NearbyActivity extends AppCompatActivity {
             String resultString;
             String inputLine;
             try {
-                HttpURLConnection connection = (HttpURLConnection) new URL("http://172.20.10.5:8080/restaurants").openConnection();
+                HttpURLConnection connection = (HttpURLConnection) new URL("http://192.168.1.225:8080/restaurants").openConnection();
                 connection.setRequestMethod("GET");
                 connection.setReadTimeout(15000);
                 connection.setConnectTimeout(15000);

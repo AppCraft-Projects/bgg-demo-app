@@ -21,6 +21,7 @@ import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import hu.androidworkshop.activity.NearbyActivity;
 import hu.androidworkshop.cache.ImageCache;
 import hu.androidworkshop.places.R;
 import hu.androidworkshop.places.model.RecommendationModel;
@@ -29,14 +30,14 @@ public class NearbyAdapter extends ArrayAdapter<RecommendationModel> {
 
     private static final String TAG = NearbyAdapter.class.getSimpleName();
 
-    public NearbyAdapter(@NonNull Context context) {
-        super(context, R.layout.recommendation_item);
+    public NearbyAdapter(@NonNull NearbyActivity nearbyActivity) {
+        super(nearbyActivity, R.layout.recommendation_item);
     }
 
     @NonNull
     @Override
-    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        RecommendationModel recommendation = getItem(position);
+    public View getView(final int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+        final RecommendationModel recommendation = getItem(position);
 
         ViewHolder viewHolder = null;
         if (convertView == null) {
@@ -72,6 +73,12 @@ public class NearbyAdapter extends ArrayAdapter<RecommendationModel> {
         }
 
         viewHolder.detailsButton.setText(R.string.details_button_title);
+        convertView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((NearbyActivity)getContext()).itemClicked(recommendation, v);
+            }
+        });
 
         return convertView;
     }
@@ -85,7 +92,7 @@ public class NearbyAdapter extends ArrayAdapter<RecommendationModel> {
         Button detailsButton;
     }
 
-    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+    public static class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
 
         private final WeakReference<ImageView> imageViewWeakReference;
         private String url;

@@ -43,6 +43,11 @@
             android:label="@string/detail_activity_title"
             android:parentActivityName="hu.androidworkshop.activity.NearbyActivity">
         </activity>
+        <activity
+            android:name="hu.androidworkshop.activity.EditRecommendationActivity"
+            android:label="@string/title_edit"
+            />
+        <activity android:name="hu.androidworkshop.activity.AddRecommendationActivity" />
     </application>
 
 </manifest>
