@@ -46,8 +46,12 @@
         <activity
             android:name="hu.androidworkshop.activity.EditRecommendationActivity"
             android:label="@string/title_edit"
+            android:parentActivityName="hu.androidworkshop.activity.RecommendationDetailActivity"
             />
-        <activity android:name="hu.androidworkshop.activity.AddRecommendationActivity" />
+        <activity
+            android:name="hu.androidworkshop.activity.AddRecommendationActivity"
+            android:label="@string/title_edit"
+            />
     </application>
 
 </manifest>

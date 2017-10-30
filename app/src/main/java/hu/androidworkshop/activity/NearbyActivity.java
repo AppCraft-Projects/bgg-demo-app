@@ -135,7 +135,7 @@ public class NearbyActivity extends AppCompatActivity {
             String resultString;
             String inputLine;
             try {
-                HttpURLConnection connection = (HttpURLConnection) new URL("http://192.168.1.225:8080/restaurants").openConnection();
+                HttpURLConnection connection = (HttpURLConnection) new URL("http://192.168.1.178:8080/restaurants").openConnection();
                 connection.setRequestMethod("GET");
                 connection.setReadTimeout(15000);
                 connection.setConnectTimeout(15000);

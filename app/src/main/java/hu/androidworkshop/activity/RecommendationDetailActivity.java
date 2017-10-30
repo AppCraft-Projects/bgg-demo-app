@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -32,6 +33,8 @@ public class RecommendationDetailActivity extends AppCompatActivity {
 
     private FloatingActionButton editButton;
 
+    private int id;
+
     public static Intent newIntent(Activity activity) {
         return new Intent(activity, RecommendationDetailActivity.class);
     }
@@ -42,12 +45,13 @@ public class RecommendationDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_recommendation_detail);
 
 
-        int id = getIntent().getIntExtra(NearbyActivity.RECOMMENDATION_ID_KEY_BUNDLE, -1);
+        id = getIntent().getIntExtra(NearbyActivity.RECOMMENDATION_ID_KEY_BUNDLE, -1);
         recommendationModel = RecommendationDatabaseHelper.getInstance(this).getRecommendationById(id);
 
         placeName = findViewById(R.id.place_name);
         placeName.setText(recommendationModel.getName());
         authorInfo = findViewById(R.id.author_info);
+        editButton = findViewById(R.id.edit_button);
         String authorInfoText = recommendationModel.getUser().getFirstName() + " " + recommendationModel.getUser().getLastName();
         authorInfo.setText(authorInfoText);
 
@@ -60,6 +64,15 @@ public class RecommendationDetailActivity extends AppCompatActivity {
 
         description = findViewById(R.id.place_description);
         description.setText(recommendationModel.getShortDescription());
+
+        editButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = EditRecommendationActivity.newIntent(RecommendationDetailActivity.this);
+                intent.putExtra(NearbyActivity.RECOMMENDATION_ID_KEY_BUNDLE, id);
+                ActivityCompat.startActivity(RecommendationDetailActivity.this, intent, null);
+            }
+        });
     }
 
     @Override
