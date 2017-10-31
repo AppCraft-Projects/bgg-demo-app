@@ -2,10 +2,16 @@ package hu.androidworkshop.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,6 +28,19 @@ import hu.androidworkshop.places.model.RecommendationModel;
 
 public class AddRecommendationActivity extends AppCompatActivity {
 
+    FloatingActionButton finishAddButton;
+    ImageView placePhoto;
+    TextView placeName;
+    TextView authorInfo;
+    EditText description;
+
+    String imagePath;
+
+    int id;
+
+    boolean hadImage;
+    private RecommendationModel recommendationModel;
+
     public static Intent newIntent(Activity activity) {
         Intent intent = new Intent(activity, AddRecommendationActivity.class);
         return intent;
@@ -31,6 +50,22 @@ public class AddRecommendationActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_recommendation);
+
+        finishAddButton = findViewById(R.id.finish_add_button);
+        finishAddButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+    }
+
+    public final class AddRecommendationTask extends AsyncTask<Void, Void, RecommendationModel> {
+
+        @Override
+        protected RecommendationModel doInBackground(Void... voids) {
+            return null;
+        }
     }
 
 //    if (imagePath != null) {
