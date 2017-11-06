@@ -4,20 +4,22 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -36,13 +38,16 @@ import hu.androidworkshop.places.model.RecommendationModel;
 public class EditRecommendationActivity extends AppCompatActivity {
 
 
+    private static final int PICK_PHOTO_CODE = 1046;
+
     FloatingActionButton finishEditButton;
     ImageView placePhoto;
     TextView placeName;
     TextView authorInfo;
+    TextView descriptionCharacterLimit;
     EditText description;
 
-    String imagePath;
+    Uri imagePath;
 
     int id;
 
@@ -73,6 +78,35 @@ public class EditRecommendationActivity extends AppCompatActivity {
         }
 
         description.setText(recommendationModel.getShortDescription());
+        descriptionCharacterLimit = findViewById(R.id.description_character_limit);
+        descriptionCharacterLimit.setText(getString(R.string.description_char_limit_format, recommendationModel.getShortDescription().length()));
+        description.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                descriptionCharacterLimit.setText(getString(R.string.description_char_limit_format, s.toString().length()));
+            }
+        });
+
+        placePhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_PICK,
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                if (intent.resolveActivity(getPackageManager()) != null) {
+                    startActivityForResult(intent, PICK_PHOTO_CODE);
+                }
+            }
+        });
 
         finishEditButton = findViewById(R.id.finish_edit_button);
         finishEditButton.setOnClickListener(new View.OnClickListener() {
@@ -81,6 +115,15 @@ public class EditRecommendationActivity extends AppCompatActivity {
                 new EditRecommendationTask(EditRecommendationActivity.this, imagePath, description.getText().toString()).execute();
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (data != null) {
+            imagePath = data.getData();
+            hadImage = true;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     public static Intent newIntent(Activity activity) {
@@ -92,12 +135,12 @@ public class EditRecommendationActivity extends AppCompatActivity {
 
         private final String TAG = EditRecommendationTask.class.getSimpleName();
 
-        private String imagePath;
+        private Uri imagePath;
         private String description;
         private RecommendationDatabaseHelper databaseHelper;
         private ProgressDialog progressDialog;
 
-        public EditRecommendationTask(Context context, String imagePath, String description) {
+        public EditRecommendationTask(Context context, Uri imagePath, String description) {
             this.imagePath = imagePath;
             this.description = description;
             databaseHelper = RecommendationDatabaseHelper.getInstance(context);
@@ -120,6 +163,7 @@ public class EditRecommendationActivity extends AppCompatActivity {
                 progressDialog.dismiss();
             }
             Intent navIntent = NavUtils.getParentActivityIntent(EditRecommendationActivity.this);
+            navIntent.putExtra(NearbyActivity.RECOMMENDATION_ID_KEY_BUNDLE, recommendationModel.getId());
             EditRecommendationActivity.this.navigateUpToFromChild(EditRecommendationActivity.this, navIntent);
         }
 
@@ -130,12 +174,15 @@ public class EditRecommendationActivity extends AppCompatActivity {
             }
             String resultString;
             String inputLine;
+            RecommendationModel model = null;
             try {
-                HttpURLConnection connection = (HttpURLConnection) new URL("http://192.168.1.178:8080/restaurants/" + recommendationModel.getId()).openConnection();
+                HttpURLConnection connection = (HttpURLConnection) new URL("http://192.168.1.225:8080/restaurants/" + recommendationModel.getId()).openConnection();
                 connection.setRequestProperty("Content-Type", "application/json");
                 connection.setRequestMethod("POST");
                 connection.setReadTimeout(15000);
                 connection.setConnectTimeout(15000);
+                connection.setDoInput(true);
+                connection.setDoOutput(true);
 
                 OutputStreamWriter outputStreamWriter = new OutputStreamWriter(connection.getOutputStream());
                 JSONObject jsonObject = new JSONObject()
@@ -150,8 +197,13 @@ public class EditRecommendationActivity extends AppCompatActivity {
                 outputStreamWriter.flush();
 
                 //Create a new InputStreamReader
-                InputStreamReader streamReader = new
-                        InputStreamReader(connection.getInputStream());
+                InputStreamReader streamReader;
+                int code = connection.getResponseCode();
+                if (code != HttpURLConnection.HTTP_OK) {
+                    streamReader = new InputStreamReader(connection.getErrorStream());
+                } else {
+                    streamReader = new InputStreamReader(connection.getInputStream());
+                }
                 //Create a new buffered reader and String Builder
                 BufferedReader reader = new BufferedReader(streamReader);
                 StringBuilder stringBuilder = new StringBuilder();
@@ -167,12 +219,12 @@ public class EditRecommendationActivity extends AppCompatActivity {
                 resultString = stringBuilder.toString();
 
                 JSONObject resultObject = new JSONObject(resultString);
-                RecommendationModel model = new RecommendationModel(resultObject);
+                model = new RecommendationModel(resultObject);
                 databaseHelper.addRecommendation(model);
             } catch (IOException | JSONException e) {
                 Log.e(TAG, e.getMessage(), e);
             }
-            return null;
+            return model;
         }
 
         private void uploadImage() {

@@ -2,8 +2,12 @@
     <string name="app_name">Budapest Gourmet Guide</string>
     <string name="nearby_title">Nearby</string>
     <string name="title_activity_map">Map</string>
-    <string name="loading_text">Loading...</string>
+    <string name="loading_text">Loading…</string>
     <string name="details_button_title">Részletek</string>
     <string name="detail_activity_title">Detail</string>
     <string name="title_edit">Compose</string>
+    <string name="place_description_placeholder">Write your description here</string>
+    <string name="description_char_limit_format">%d/800</string>
+    <string name="author_info_placeholder">Author info here</string>
+    <string name="place_name_placeholder">Name of the place here</string>
 </resources>

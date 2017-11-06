@@ -1,6 +1,5 @@
 package hu.androidworkshop.adapter;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
@@ -144,8 +143,12 @@ public class NearbyAdapter extends ArrayAdapter<RecommendationModel> {
                     return bitmap;
                 }
             } catch (Exception e) {
-                urlConnection.disconnect();
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
                 Log.e("ImageDownloader", "Error downloading image from " + url);
+                Drawable placeholder = imageViewWeakReference.get().getContext().getDrawable(R.drawable.placeholder);
+                imageViewWeakReference.get().setImageDrawable(placeholder);
             } finally {
                 if (urlConnection != null) {
                     urlConnection.disconnect();
