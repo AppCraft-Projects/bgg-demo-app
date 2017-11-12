@@ -111,8 +111,9 @@ public class NearbyAdapter extends ArrayAdapter<RecommendationModel> {
             if (isCancelled()) {
                 bitmap = null;
             }
-
-            ImageCache.getInstance().put(url, bitmap);
+            if (bitmap != null) {
+                ImageCache.getInstance().put(url, bitmap);
+            }
 
             if (imageViewWeakReference != null) {
                 ImageView imageView = imageViewWeakReference.get();
@@ -147,8 +148,6 @@ public class NearbyAdapter extends ArrayAdapter<RecommendationModel> {
                     urlConnection.disconnect();
                 }
                 Log.e("ImageDownloader", "Error downloading image from " + url);
-                Drawable placeholder = imageViewWeakReference.get().getContext().getDrawable(R.drawable.placeholder);
-                imageViewWeakReference.get().setImageDrawable(placeholder);
             } finally {
                 if (urlConnection != null) {
                     urlConnection.disconnect();

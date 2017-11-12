@@ -17,9 +17,13 @@ import hu.androidworkshop.persistence.RecommendationDatabaseHelper;
 import hu.androidworkshop.places.R;
 import hu.androidworkshop.places.model.RecommendationModel;
 
+import static hu.androidworkshop.activity.AddRecommendationActivity.NAVIGATION_FROM_NEARBY;
+
 public class RecommendationDetailActivity extends AppCompatActivity {
 
     private static final String TAG = RecommendationDetailActivity.class.getSimpleName();
+
+    public static final String RECOMMENDATION_ID_KEY_BUNDLE = "RECOMMENDATION_ID_KEY_BUNDLE";
 
     private RecommendationModel recommendationModel;
 
@@ -34,9 +38,12 @@ public class RecommendationDetailActivity extends AppCompatActivity {
     private FloatingActionButton editButton;
 
     private int id;
+    private boolean fromNearby;
 
-    public static Intent newIntent(Activity activity) {
-        return new Intent(activity, RecommendationDetailActivity.class);
+    public static Intent newIntent(Activity activity, boolean fromNearby) {
+        Intent intent = new Intent(activity, RecommendationDetailActivity.class);
+        intent.putExtra(AddRecommendationActivity.NAVIGATION_FROM_NEARBY, fromNearby);
+        return intent;
     }
 
     @Override
@@ -45,7 +52,8 @@ public class RecommendationDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_recommendation_detail);
 
 
-        id = getIntent().getIntExtra(NearbyActivity.RECOMMENDATION_ID_KEY_BUNDLE, -1);
+        fromNearby = getIntent().getBooleanExtra(NAVIGATION_FROM_NEARBY, false);
+        id = getIntent().getIntExtra(RECOMMENDATION_ID_KEY_BUNDLE, -1);
         recommendationModel = RecommendationDatabaseHelper.getInstance(this).getRecommendationById(id);
 
         placeName = findViewById(R.id.place_name);
@@ -69,7 +77,7 @@ public class RecommendationDetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = EditRecommendationActivity.newIntent(RecommendationDetailActivity.this);
-                intent.putExtra(NearbyActivity.RECOMMENDATION_ID_KEY_BUNDLE, id);
+                intent.putExtra(RECOMMENDATION_ID_KEY_BUNDLE, id);
                 ActivityCompat.startActivity(RecommendationDetailActivity.this, intent, null);
             }
         });
@@ -77,6 +85,14 @@ public class RecommendationDetailActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        ActivityCompat.finishAfterTransition(this);
+        if (fromNearby) {
+            Intent intent = new Intent(this, NearbyActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+        } else {
+            Intent intent = new Intent(this, MapActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+        }
     }
 }

@@ -8,8 +8,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -34,11 +32,11 @@ import hu.androidworkshop.persistence.RecommendationDatabaseHelper;
 import hu.androidworkshop.places.R;
 import hu.androidworkshop.places.model.RecommendationModel;
 
+import static hu.androidworkshop.activity.RecommendationDetailActivity.RECOMMENDATION_ID_KEY_BUNDLE;
+
 public class NearbyActivity extends AppCompatActivity {
 
     private static final String TAG = NearbyActivity.class.getClass().getSimpleName();
-
-    public static final String RECOMMENDATION_ID_KEY_BUNDLE = "RECOMMENDATION_ID_KEY_BUNDLE";
 
     private ListView listView;
     private FloatingActionButton addButton;
@@ -60,7 +58,7 @@ public class NearbyActivity extends AppCompatActivity {
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(AddRecommendationActivity.newIntent(NearbyActivity.this));
+                startActivity(AddRecommendationActivity.newIntent(NearbyActivity.this, true));
             }
         });
 
@@ -98,7 +96,7 @@ public class NearbyActivity extends AppCompatActivity {
     }
 
     public void itemClicked(RecommendationModel recommendation, View view) {
-        Intent intent = RecommendationDetailActivity.newIntent(this);
+        Intent intent = RecommendationDetailActivity.newIntent(this, true);
         intent.putExtra(RECOMMENDATION_ID_KEY_BUNDLE, recommendation.getId());
         ActivityCompat.startActivity(this, intent, null);
     }
@@ -135,7 +133,7 @@ public class NearbyActivity extends AppCompatActivity {
             String resultString;
             String inputLine;
             try {
-                HttpURLConnection connection = (HttpURLConnection) new URL("http://192.168.1.225:8080/restaurants").openConnection();
+                HttpURLConnection connection = (HttpURLConnection) new URL("http://192.168.0.8:8080/restaurants").openConnection();
                 connection.setRequestMethod("GET");
                 connection.setReadTimeout(15000);
                 connection.setConnectTimeout(15000);

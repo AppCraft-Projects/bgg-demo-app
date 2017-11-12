@@ -35,6 +35,8 @@ import hu.androidworkshop.persistence.RecommendationDatabaseHelper;
 import hu.androidworkshop.places.R;
 import hu.androidworkshop.places.model.RecommendationModel;
 
+import static hu.androidworkshop.activity.RecommendationDetailActivity.RECOMMENDATION_ID_KEY_BUNDLE;
+
 public class EditRecommendationActivity extends AppCompatActivity {
 
 
@@ -58,7 +60,7 @@ public class EditRecommendationActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_recommendation);
-        id = getIntent().getIntExtra(NearbyActivity.RECOMMENDATION_ID_KEY_BUNDLE, -1);
+        id = getIntent().getIntExtra(RECOMMENDATION_ID_KEY_BUNDLE, -1);
 
         recommendationModel = RecommendationDatabaseHelper.getInstance(this).getRecommendationById(id);
 
@@ -163,7 +165,7 @@ public class EditRecommendationActivity extends AppCompatActivity {
                 progressDialog.dismiss();
             }
             Intent navIntent = NavUtils.getParentActivityIntent(EditRecommendationActivity.this);
-            navIntent.putExtra(NearbyActivity.RECOMMENDATION_ID_KEY_BUNDLE, recommendationModel.getId());
+            navIntent.putExtra(RECOMMENDATION_ID_KEY_BUNDLE, recommendationModel.getId());
             EditRecommendationActivity.this.navigateUpToFromChild(EditRecommendationActivity.this, navIntent);
         }
 
@@ -176,7 +178,7 @@ public class EditRecommendationActivity extends AppCompatActivity {
             String inputLine;
             RecommendationModel model = null;
             try {
-                HttpURLConnection connection = (HttpURLConnection) new URL("http://192.168.1.225:8080/restaurants/" + recommendationModel.getId()).openConnection();
+                HttpURLConnection connection = (HttpURLConnection) new URL("http://192.168.0.8:8080/restaurants/" + recommendationModel.getId()).openConnection();
                 connection.setRequestProperty("Content-Type", "application/json");
                 connection.setRequestMethod("POST");
                 connection.setReadTimeout(15000);

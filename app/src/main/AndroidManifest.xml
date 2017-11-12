@@ -2,14 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="hu.androidworkshop.places">
 
-    <!--
-         The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
-         Google Maps Android API v2, but you must specify either coarse or fine
-         location permissions for the 'MyLocation' functionality. 
-    -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:name="hu.androidworkshop.GourmetApplication"
@@ -43,8 +39,7 @@
             android:label="@string/title_activity_map"/>
         <activity
             android:name="hu.androidworkshop.activity.RecommendationDetailActivity"
-            android:label="@string/detail_activity_title"
-            android:parentActivityName="hu.androidworkshop.activity.NearbyActivity">
+            android:label="@string/detail_activity_title">
         </activity>
         <activity
             android:name="hu.androidworkshop.activity.EditRecommendationActivity"

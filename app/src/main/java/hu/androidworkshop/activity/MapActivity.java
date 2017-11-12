@@ -2,21 +2,48 @@ package hu.androidworkshop.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+
+import hu.androidworkshop.persistence.RecommendationDatabaseHelper;
 import hu.androidworkshop.places.R;
+import hu.androidworkshop.places.model.RecommendationModel;
+
+import static hu.androidworkshop.activity.RecommendationDetailActivity.RECOMMENDATION_ID_KEY_BUNDLE;
 
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
+
+    private static final String TAG = MapActivity.class.getSimpleName();
+    private LatLngBounds latLngBounds;
 
     public static Intent newIntent(Activity activity) {
         Intent intent = new Intent(activity, MapActivity.class);
@@ -24,7 +51,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         return intent;
     }
 
-    private GoogleMap mMap;
+    private GoogleMap map;
+    private List<RecommendationModel> models;
+    private List<LatLng> coordinates;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +64,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         setTitle(R.string.title_activity_map);
+        models = RecommendationDatabaseHelper.getInstance(this).getRecommendations();
+        findViewById(R.id.add_recommendation_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(AddRecommendationActivity.newIntent(MapActivity.this, false));
+            }
+        });
     }
 
     @Override
@@ -62,11 +98,81 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
+        map = googleMap;
+        map.getUiSettings().setZoomGesturesEnabled(true);
+        map.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+            @Override
+            public void onInfoWindowClick(Marker marker) {
+                Intent intent = new Intent(MapActivity.this, RecommendationDetailActivity.class);
+                intent.putExtra(RECOMMENDATION_ID_KEY_BUNDLE, Integer.valueOf(marker.getSnippet()));
+                startActivity(intent);
+            }
+        });
+        map.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+            @Override
+            public void onMapLoaded() {
+                coordinates = new ArrayList<>();
+                InputStream inputStream = null;
+                try {
+                    inputStream = getResources().openRawResource(R.raw.coords);
+                    StringBuilder stringBuilder = new StringBuilder();
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                    String str;
+                    while ((str = bufferedReader.readLine()) != null) {
+                        stringBuilder.append(str).append("\n");
+                    }
+                    JSONObject jsonObject = new JSONObject(stringBuilder.toString());
+                    JSONArray jsonArray = jsonObject.getJSONArray("coords");
+                    JSONObject tmpCoord;
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        tmpCoord =  jsonArray.getJSONObject(i);
+                        double lat = tmpCoord.getDouble("lat");
+                        double lon = tmpCoord.getDouble("lon");
+                        coordinates.add(new LatLng(lat, lon));
+                    }
+                } catch (IOException e) {
+                    Log.e(TAG, "Error while reading coordinates file", e);
+                } catch (JSONException e) {
+                    Log.e(TAG, "Error while creating JSONObject", e);
+                } finally {
+                    try {
+                        if (inputStream != null) {
+                            inputStream.close();
+                        }
+                    } catch (IOException e) {
+                        Log.e(TAG, "Error while closing the coordinates file :D", e);
+                    }
+                }
+                Drawable markerIcon = getDrawable(R.drawable.ic_room_black_24dp);
 
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+                markerIcon.setTint(getResources().getColor(R.color.colorPrimary));
+                Canvas canvas = new Canvas();
+                Bitmap bitmap = Bitmap.createBitmap(markerIcon.getIntrinsicWidth(), markerIcon.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+                canvas.setBitmap(bitmap);
+                markerIcon.setBounds(0, 0, markerIcon.getIntrinsicWidth(), markerIcon.getIntrinsicHeight());
+                markerIcon.draw(canvas);
+                BitmapDescriptor marker = BitmapDescriptorFactory.fromBitmap(bitmap);
+                LatLngBounds.Builder builder = LatLngBounds.builder();
+                LatLng latLngTmp;
+                RecommendationModel modelTmp;
+                for (int i = 0; i < models.size(); i++) {
+                    latLngTmp = coordinates.get(i);
+                    modelTmp = models.get(i);
+
+                    MarkerOptions markerOptions = new MarkerOptions()
+                            .position(latLngTmp)
+                            .title(modelTmp.getName())
+                            .icon(marker)
+                            .draggable(false)
+                            .snippet(String.valueOf(modelTmp.getId()))
+                            .visible(true);
+                    builder.include(latLngTmp);
+                    map.addMarker(markerOptions);
+                    Log.d(TAG, String.format("Added coordinate: %s\nWith model: %s", latLngTmp.toString(), modelTmp.toString()));
+                }
+                latLngBounds = builder.build();
+                map.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 15));
+            }
+        });
     }
 }
