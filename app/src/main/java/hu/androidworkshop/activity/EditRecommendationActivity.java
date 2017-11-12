@@ -221,7 +221,7 @@ public class EditRecommendationActivity extends AppCompatActivity {
                 resultString = stringBuilder.toString();
 
                 JSONObject resultObject = new JSONObject(resultString);
-                model = new RecommendationModel(resultObject);
+                model = new RecommendationModel();
                 databaseHelper.addRecommendation(model);
             } catch (IOException | JSONException e) {
                 Log.e(TAG, e.getMessage(), e);
