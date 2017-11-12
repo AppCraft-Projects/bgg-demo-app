@@ -6,16 +6,16 @@ import retrofit2.Call
 import retrofit2.http.*
 
 interface BGGApiDefinition {
-    @GET("/restaurants")
+    @GET("restaurants")
     fun getRecommendations() : Call<List<RecommendationModel>>
 
-    @GET("/restaurants/{id}")
+    @GET("restaurants/{id}")
     fun getRecommendation(@Path("id") id: String) : Call<RecommendationModel>
 
-    @POST("/restaurants")
+    @POST("restaurants")
     fun addRestaurant(@Body recommendation : RecommendationModel) : Call<RecommendationModel>
 
     @Multipart
-    @POST("/upload")
+    @POST("upload")
     fun uploadImage(@Part("image") body: RequestBody) : Call<String>
 }

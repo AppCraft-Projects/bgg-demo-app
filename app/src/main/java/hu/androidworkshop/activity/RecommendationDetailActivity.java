@@ -11,8 +11,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import hu.androidworkshop.adapter.NearbyAdapter;
-import hu.androidworkshop.cache.ImageCache;
+import com.squareup.picasso.Picasso;
+
 import hu.androidworkshop.persistence.RecommendationDatabaseHelper;
 import hu.androidworkshop.places.R;
 import hu.androidworkshop.places.model.RecommendationModel;
@@ -64,11 +64,11 @@ public class RecommendationDetailActivity extends AppCompatActivity {
         authorInfo.setText(authorInfoText);
 
         placePhoto = findViewById(R.id.place_photo);
-        if (!ImageCache.getInstance().contains(recommendationModel.getImageURL())) {
-            new NearbyAdapter.DownloadImageTask(placePhoto).execute(recommendationModel.getImageURL());
-        } else {
-            placePhoto.setImageBitmap(ImageCache.getInstance().get(recommendationModel.getImageURL()));
-        }
+        Picasso.with(this)
+                .load(recommendationModel.getImageURL())
+                .placeholder(R.drawable.food)
+                .error(R.drawable.food)
+                .into(placePhoto);
 
         description = findViewById(R.id.place_description);
         description.setText(recommendationModel.getShortDescription());

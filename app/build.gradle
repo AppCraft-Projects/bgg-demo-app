@@ -50,13 +50,13 @@ android {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
-            buildConfigField "String", "API_BASE_URL", "\"http://192.168.0.8:${apiPortNumber()}\""
+            buildConfigField "String", "API_BASE_URL", "\"http://192.168.0.8:${apiPortNumber()}/\""
         }
         debug {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
-            buildConfigField "String", "API_BASE_URL", "\"http://192.168.0.8:${apiPortNumber()}\""
+            buildConfigField "String", "API_BASE_URL", "\"http://192.168.0.8:${apiPortNumber()}/\""
         }
     }
 

@@ -10,4 +10,5 @@
     <string name="description_char_limit_format">%d/800</string>
     <string name="author_info_placeholder">Author info here</string>
     <string name="place_name_placeholder">Name of the place here</string>
+    <string name="successful_action">Sikeres művelet</string>
 </resources>

@@ -5,6 +5,7 @@ import android.app.Application;
 import java.util.concurrent.TimeUnit;
 
 import hu.androidworkshop.network.BGGApiDefinition;
+import hu.androidworkshop.network.ImageUploader;
 import hu.androidworkshop.persistence.RecommendationDatabaseHelper;
 import hu.androidworkshop.places.BuildConfig;
 import okhttp3.OkHttpClient;
@@ -14,6 +15,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class GourmetApplication extends Application {
 
     private BGGApiDefinition apiDefinition;
+    private ImageUploader imageUploader;
 
     @Override
     public void onCreate() {
@@ -30,10 +32,15 @@ public class GourmetApplication extends Application {
                 .baseUrl(BuildConfig.API_BASE_URL)
                 .build()
                 .create(BGGApiDefinition.class);
+        imageUploader = new ImageUploader(okHttpClient);
         RecommendationDatabaseHelper.getInstance(this).deleteAllPostsAndUsers();
     }
 
     public BGGApiDefinition getApiClient() {
         return apiDefinition;
+    }
+
+    public ImageUploader getImageUploader() {
+        return imageUploader;
     }
 }

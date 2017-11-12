@@ -20,6 +20,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -76,7 +78,11 @@ public class EditRecommendationActivity extends AppCompatActivity {
 
         if (recommendationModel.getImageURL() != null) {
             hadImage = true;
-            new NearbyAdapter.DownloadImageTask(placePhoto).execute(recommendationModel.getImageURL());
+            Picasso.with(this)
+                    .load(recommendationModel.getImageURL())
+                    .placeholder(R.drawable.food)
+                    .error(R.drawable.food)
+                    .into(placePhoto);
         }
 
         description.setText(recommendationModel.getShortDescription());
@@ -114,9 +120,14 @@ public class EditRecommendationActivity extends AppCompatActivity {
         finishEditButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                uploadRecommendation();
                 new EditRecommendationTask(EditRecommendationActivity.this, imagePath, description.getText().toString()).execute();
             }
         });
+    }
+
+    private void uploadRecommendation() {
+
     }
 
     @Override
