@@ -23,10 +23,6 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,8 +30,12 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import hu.androidworkshop.GourmetApplication;
+import hu.androidworkshop.json.JsonMapperInterface;
 import hu.androidworkshop.persistence.RecommendationDatabaseHelper;
 import hu.androidworkshop.places.R;
+import hu.androidworkshop.places.model.Coordinate;
+import hu.androidworkshop.places.model.CoordinatesModel;
 import hu.androidworkshop.places.model.RecommendationModel;
 
 import static hu.androidworkshop.activity.RecommendationDetailActivity.RECOMMENDATION_ID_KEY_BUNDLE;
@@ -44,6 +44,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private static final String TAG = MapActivity.class.getSimpleName();
     private LatLngBounds latLngBounds;
+    private JsonMapperInterface jsonMapper;
 
     public static Intent newIntent(Activity activity) {
         Intent intent = new Intent(activity, MapActivity.class);
@@ -64,6 +65,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         setTitle(R.string.title_activity_map);
+        GourmetApplication application = (GourmetApplication) getApplication();
+        jsonMapper = application.getJsonMapper();
         models = RecommendationDatabaseHelper.getInstance(this).getRecommendations();
         findViewById(R.id.add_recommendation_button).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -121,19 +124,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     while ((str = bufferedReader.readLine()) != null) {
                         stringBuilder.append(str).append("\n");
                     }
-                    JSONObject jsonObject = new JSONObject(stringBuilder.toString());
-                    JSONArray jsonArray = jsonObject.getJSONArray("coords");
-                    JSONObject tmpCoord;
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        tmpCoord =  jsonArray.getJSONObject(i);
-                        double lat = tmpCoord.getDouble("lat");
-                        double lon = tmpCoord.getDouble("lon");
-                        coordinates.add(new LatLng(lat, lon));
+                    CoordinatesModel model = jsonMapper.deserialize(stringBuilder.toString(), CoordinatesModel.class);
+                    for(Coordinate coordinate : model.getCoordinates()) {
+                        coordinates.add(new LatLng(coordinate.getLat(), coordinate.getLon()));
                     }
                 } catch (IOException e) {
                     Log.e(TAG, "Error while reading coordinates file", e);
-                } catch (JSONException e) {
-                    Log.e(TAG, "Error while creating JSONObject", e);
                 } finally {
                     try {
                         if (inputStream != null) {
@@ -168,7 +164,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                             .visible(true);
                     builder.include(latLngTmp);
                     map.addMarker(markerOptions);
-                    Log.d(TAG, String.format("Added coordinate: %s\nWith model: %s", latLngTmp.toString(), modelTmp.toString()));
                 }
                 latLngBounds = builder.build();
                 map.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 15));

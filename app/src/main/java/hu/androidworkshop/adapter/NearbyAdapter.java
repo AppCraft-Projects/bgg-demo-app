@@ -55,7 +55,6 @@ public class NearbyAdapter extends ArrayAdapter<RecommendationModel> {
         viewHolder.description.setText(descriptionText);
 
         if (viewHolder.foodImageView != null) {
-            final ViewHolder finalViewHolder = viewHolder;
             Picasso.with(getContext())
                     .load(recommendation.getImageURL())
                     .placeholder(R.drawable.food)

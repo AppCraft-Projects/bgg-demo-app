@@ -42,11 +42,6 @@
             android:label="@string/detail_activity_title">
         </activity>
         <activity
-            android:name="hu.androidworkshop.activity.EditRecommendationActivity"
-            android:label="@string/title_edit"
-            android:parentActivityName="hu.androidworkshop.activity.RecommendationDetailActivity"
-            />
-        <activity
             android:name="hu.androidworkshop.activity.AddRecommendationActivity"
             android:label="@string/title_edit"
             />

@@ -2,21 +2,17 @@ package hu.androidworkshop.network
 
 import okhttp3.*
 import java.io.File
-import java.io.IOException
 
-class ImageUploader {
+interface ImageUploaderInterface {
+    fun uploadImage(image: File, url: String, callback: Callback)
+}
 
-    private val httpClient: OkHttpClient
+class ImageUploader(private val httpClient: OkHttpClient, private val fileNameKey: String) : ImageUploaderInterface {
 
-    constructor(httpClient: OkHttpClient) {
-        this.httpClient = httpClient
-    }
-
-
-    fun uploadImage(image: File, url: String, callback: Callback) {
+    override fun uploadImage(image: File, url: String, callback: Callback) {
         val requestBody = MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
-                .addFormDataPart("image", image.name, RequestBody.create(MEDIA_TYPE_JPG, image))
+                .addFormDataPart(fileNameKey, image.name, RequestBody.create(MEDIA_TYPE_JPG, image))
                 .build()
         val request = Request.Builder()
                 .url(url)

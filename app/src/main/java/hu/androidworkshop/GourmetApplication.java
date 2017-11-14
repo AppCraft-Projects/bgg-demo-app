@@ -2,10 +2,16 @@ package hu.androidworkshop;
 
 import android.app.Application;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import java.util.concurrent.TimeUnit;
 
+import hu.androidworkshop.json.JsonMapper;
+import hu.androidworkshop.json.JsonMapperInterface;
 import hu.androidworkshop.network.BGGApiDefinition;
 import hu.androidworkshop.network.ImageUploader;
+import hu.androidworkshop.network.ImageUploaderInterface;
 import hu.androidworkshop.persistence.RecommendationDatabaseHelper;
 import hu.androidworkshop.places.BuildConfig;
 import okhttp3.OkHttpClient;
@@ -15,7 +21,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class GourmetApplication extends Application {
 
     private BGGApiDefinition apiDefinition;
-    private ImageUploader imageUploader;
+    private ImageUploaderInterface imageUploader;
+    private JsonMapperInterface jsonMapper;
 
     @Override
     public void onCreate() {
@@ -26,13 +33,16 @@ public class GourmetApplication extends Application {
                 .readTimeout(60L, TimeUnit.SECONDS)
                 .connectTimeout(60L, TimeUnit.SECONDS)
                 .build();
+        Gson gson = new GsonBuilder().create();
+
+        jsonMapper = new JsonMapper(gson);
         apiDefinition = new Retrofit.Builder()
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(gson))
                 .client(okHttpClient)
                 .baseUrl(BuildConfig.API_BASE_URL)
                 .build()
                 .create(BGGApiDefinition.class);
-        imageUploader = new ImageUploader(okHttpClient);
+        imageUploader = new ImageUploader(okHttpClient, "image");
         RecommendationDatabaseHelper.getInstance(this).deleteAllPostsAndUsers();
     }
 
@@ -40,7 +50,11 @@ public class GourmetApplication extends Application {
         return apiDefinition;
     }
 
-    public ImageUploader getImageUploader() {
+    public ImageUploaderInterface getImageUploader() {
         return imageUploader;
+    }
+
+    public JsonMapperInterface getJsonMapper() {
+        return jsonMapper;
     }
 }
