@@ -4,10 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -21,23 +18,8 @@ import static hu.androidworkshop.activity.AddRecommendationActivity.NAVIGATION_F
 
 public class RecommendationDetailActivity extends AppCompatActivity {
 
-    private static final String TAG = RecommendationDetailActivity.class.getSimpleName();
-
     public static final String RECOMMENDATION_ID_KEY_BUNDLE = "RECOMMENDATION_ID_KEY_BUNDLE";
 
-    private RecommendationModel recommendationModel;
-
-    private TextView placeName;
-
-    private TextView authorInfo;
-
-    private ImageView placePhoto;
-
-    private TextView description;
-
-    private FloatingActionButton editButton;
-
-    private int id;
     private boolean fromNearby;
 
     public static Intent newIntent(Activity activity, boolean fromNearby) {
@@ -53,34 +35,24 @@ public class RecommendationDetailActivity extends AppCompatActivity {
 
 
         fromNearby = getIntent().getBooleanExtra(NAVIGATION_FROM_NEARBY, false);
-        id = getIntent().getIntExtra(RECOMMENDATION_ID_KEY_BUNDLE, -1);
-        recommendationModel = RecommendationDatabaseHelper.getInstance(this).getRecommendationById(id);
+        int id = getIntent().getIntExtra(RECOMMENDATION_ID_KEY_BUNDLE, -1);
+        RecommendationModel recommendationModel = RecommendationDatabaseHelper.getInstance(this).getRecommendationById(id);
 
-        placeName = findViewById(R.id.place_name);
+        TextView placeName = findViewById(R.id.place_name);
         placeName.setText(recommendationModel.getName());
-        authorInfo = findViewById(R.id.author_info);
-        editButton = findViewById(R.id.edit_button);
+        TextView authorInfo = findViewById(R.id.author_info);
         String authorInfoText = recommendationModel.getUser().getFirstName() + " " + recommendationModel.getUser().getLastName();
         authorInfo.setText(authorInfoText);
 
-        placePhoto = findViewById(R.id.place_photo);
+        ImageView placePhoto = findViewById(R.id.place_photo);
         if (!ImageCache.getInstance().contains(recommendationModel.getImageURL())) {
             new NearbyAdapter.DownloadImageTask(placePhoto).execute(recommendationModel.getImageURL());
         } else {
             placePhoto.setImageBitmap(ImageCache.getInstance().get(recommendationModel.getImageURL()));
         }
 
-        description = findViewById(R.id.place_description);
+        TextView description = findViewById(R.id.place_description);
         description.setText(recommendationModel.getShortDescription());
-
-        editButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = EditRecommendationActivity.newIntent(RecommendationDetailActivity.this);
-                intent.putExtra(RECOMMENDATION_ID_KEY_BUNDLE, id);
-                ActivityCompat.startActivity(RecommendationDetailActivity.this, intent, null);
-            }
-        });
     }
 
     @Override

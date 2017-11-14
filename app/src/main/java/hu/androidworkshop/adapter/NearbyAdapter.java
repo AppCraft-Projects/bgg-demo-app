@@ -38,7 +38,7 @@ public class NearbyAdapter extends ArrayAdapter<RecommendationModel> {
     public View getView(final int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         final RecommendationModel recommendation = getItem(position);
 
-        ViewHolder viewHolder = null;
+        ViewHolder viewHolder;
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.recommendation_item, parent, false);
             viewHolder = new ViewHolder();
@@ -97,7 +97,7 @@ public class NearbyAdapter extends ArrayAdapter<RecommendationModel> {
         private String url;
 
         public DownloadImageTask(ImageView imageView) {
-            imageViewWeakReference = new WeakReference<ImageView>(imageView);
+            imageViewWeakReference = new WeakReference<>(imageView);
         }
 
         @Override
@@ -147,7 +147,7 @@ public class NearbyAdapter extends ArrayAdapter<RecommendationModel> {
                 if (urlConnection != null) {
                     urlConnection.disconnect();
                 }
-                Log.e("ImageDownloader", "Error downloading image from " + url);
+                Log.e(TAG, "Error downloading image from " + url);
             } finally {
                 if (urlConnection != null) {
                     urlConnection.disconnect();

@@ -59,6 +59,7 @@ public class AddRecommendationActivity extends AppCompatActivity {
     EditText authorInfo;
     EditText description;
     TextView descriptionCharacterLimit;
+    ProgressDialog progressDialog;
 
     Uri imagePath;
 
@@ -80,6 +81,8 @@ public class AddRecommendationActivity extends AppCompatActivity {
         placeName = findViewById(R.id.place_name);
         authorInfo = findViewById(R.id.author_info);
         description = findViewById(R.id.place_description);
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setIndeterminate(true);
 
         placePhoto.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -161,7 +164,6 @@ public class AddRecommendationActivity extends AppCompatActivity {
         private String placeName;
         private String authorInfo;
         private RecommendationDatabaseHelper databaseHelper;
-        private ProgressDialog progressDialog;
         private String imageUrl;
 
         public AddRecommendationTask(Context context, Uri imagePath, String description, String placeName, String authorInfo) {
@@ -170,14 +172,12 @@ public class AddRecommendationActivity extends AppCompatActivity {
             this.placeName = placeName;
             this.authorInfo = authorInfo;
             databaseHelper = RecommendationDatabaseHelper.getInstance(context);
-            progressDialog = new ProgressDialog(context);
-            progressDialog.setIndeterminate(true);
         }
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            if (!progressDialog.isShowing()) {
+            if (progressDialog != null && !progressDialog.isShowing()) {
                 progressDialog.show();
             }
         }
@@ -185,7 +185,7 @@ public class AddRecommendationActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(RecommendationModel recommendationModel) {
             super.onPostExecute(recommendationModel);
-            if (progressDialog.isShowing()) {
+            if (progressDialog != null && progressDialog.isShowing()) {
                 progressDialog.dismiss();
             }
             if (fromNearby) {
@@ -208,7 +208,7 @@ public class AddRecommendationActivity extends AppCompatActivity {
             String inputLine;
             RecommendationModel model = null;
             try {
-                HttpURLConnection connection = (HttpURLConnection) new URL("http://192.168.0.8:8080/restaurants/").openConnection();
+                HttpURLConnection connection = (HttpURLConnection) new URL("http://192.168.1.225:8080/restaurants/").openConnection();
                 connection.setRequestProperty("Content-Type", "application/json");
                 connection.setRequestMethod("POST");
                 connection.setReadTimeout(15000);
@@ -271,7 +271,7 @@ public class AddRecommendationActivity extends AppCompatActivity {
             String responseString = null;
 
             HttpClient httpclient = new DefaultHttpClient();
-            HttpPost httppost = new HttpPost("http://192.168.0.8:8080/upload");
+            HttpPost httppost = new HttpPost("http://192.168.1.225:8080/upload");
             String fileName = String.valueOf(System.currentTimeMillis()) + ".jpg";
             File file = new File(getCacheDir(), fileName);
 
@@ -296,7 +296,7 @@ public class AddRecommendationActivity extends AppCompatActivity {
                     // Server response
                     responseString = EntityUtils.toString(r_entity);
                     Log.d(TAG, String.format("Image upload success.\nResponse:\n%s", responseString));
-                    imageUrl = "http://192.168.0.8:8080/static/" + fileName;
+                    imageUrl = "http://192.168.1.225:8080/static/" + fileName;
                 } else {
                     responseString = "Error occurred! Http Status Code: "
                             + statusCode;
