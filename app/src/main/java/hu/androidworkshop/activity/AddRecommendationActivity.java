@@ -154,7 +154,7 @@ public class AddRecommendationActivity extends AppCompatActivity {
 
     public final class AddRecommendationTask extends AsyncTask<Void, Void, RecommendationModel> {
 
-        private final String TAG = EditRecommendationActivity.EditRecommendationTask.class.getSimpleName();
+        private final String TAG = AddRecommendationTask.class.getSimpleName();
 
         private Uri imagePath;
         private String description;
