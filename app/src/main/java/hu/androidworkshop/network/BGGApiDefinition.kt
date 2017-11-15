@@ -9,13 +9,6 @@ interface BGGApiDefinition {
     @GET("restaurants")
     fun getRecommendations() : Call<List<RecommendationModel>>
 
-    @GET("restaurants/{id}")
-    fun getRecommendation(@Path("id") id: String) : Call<RecommendationModel>
-
     @POST("restaurants")
     fun addRestaurant(@Body recommendation : RecommendationModel) : Call<RecommendationModel>
-
-    @Multipart
-    @POST("upload")
-    fun uploadImage(@Part("image") body: RequestBody) : Call<String>
 }
