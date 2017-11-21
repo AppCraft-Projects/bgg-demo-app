@@ -14,6 +14,9 @@ import hu.androidworkshop.network.ImageUploader;
 import hu.androidworkshop.network.ImageUploaderInterface;
 import hu.androidworkshop.persistence.RecommendationDatabaseHelper;
 import hu.androidworkshop.places.BuildConfig;
+import hu.androidworkshop.places.model.RecommendationModel;
+import hu.androidworkshop.repository.RecommendationRepository;
+import hu.androidworkshop.repository.Repository;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -21,6 +24,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class GourmetApplication extends Application {
 
     private BGGApiDefinition apiDefinition;
+
+    private Repository<RecommendationModel, Integer> recommendationsRepository;
     private ImageUploaderInterface imageUploader;
     private JsonMapperInterface jsonMapper;
 
@@ -43,6 +48,7 @@ public class GourmetApplication extends Application {
                 .build()
                 .create(BGGApiDefinition.class);
         imageUploader = new ImageUploader(okHttpClient, "image");
+        recommendationsRepository = new RecommendationRepository(apiDefinition, RecommendationDatabaseHelper.getInstance(this));
         RecommendationDatabaseHelper.getInstance(this).deleteAllPostsAndUsers();
     }
 
@@ -56,5 +62,9 @@ public class GourmetApplication extends Application {
 
     public JsonMapperInterface getJsonMapper() {
         return jsonMapper;
+    }
+
+    public Repository<RecommendationModel,Integer> getRecommendationsRepository() {
+        return recommendationsRepository;
     }
 }

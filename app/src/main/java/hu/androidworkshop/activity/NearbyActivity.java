@@ -22,9 +22,8 @@ import hu.androidworkshop.adapter.NearbyAdapter;
 import hu.androidworkshop.persistence.RecommendationDatabaseHelper;
 import hu.androidworkshop.places.R;
 import hu.androidworkshop.places.model.RecommendationModel;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 
 import static hu.androidworkshop.activity.RecommendationDetailActivity.RECOMMENDATION_ID_KEY_BUNDLE;
 
@@ -63,12 +62,6 @@ public class NearbyActivity extends AppCompatActivity {
         ListView listView = findViewById(R.id.places_listview);
 
         adapter = new NearbyAdapter(this);
-
-
-        List<RecommendationModel> models = databaseHelper.getRecommendations();
-        adapter.addAll(models);
-        adapter.notifyDataSetChanged();
-
         listView.setAdapter(adapter);
     }
 
@@ -96,27 +89,18 @@ public class NearbyActivity extends AppCompatActivity {
         if (!progressDialog.isShowing()) {
             progressDialog.show();
         }
-
-        application.getApiClient().getRecommendations().enqueue(new Callback<List<RecommendationModel>>() {
+        application.getRecommendationsRepository().getAll(new Function1<List<? extends RecommendationModel>, Unit>() {
             @Override
-            public void onResponse(Call<List<RecommendationModel>> call, Response<List<RecommendationModel>> response) {
-                if (response.isSuccessful()) {
-                    for(RecommendationModel model : response.body()) {
-                        databaseHelper.addRecommendation(model);
-                    }
-                }
+            public Unit invoke(List<? extends RecommendationModel> recommendationModels) {
                 if (progressDialog.isShowing()) {
                     progressDialog.dismiss();
                 }
-                renderItems();
-            }
-
-            @Override
-            public void onFailure(Call<List<RecommendationModel>> call, Throwable t) {
-                Log.e(TAG, "Error while fetching recommendations", t);
-                if (progressDialog.isShowing()) {
-                    progressDialog.dismiss();
+                if (recommendationModels == null) {
+                    Log.e(TAG, "Error while fetching recommendations");
+                } else {
+                    renderItems(recommendationModels);
                 }
+                return null;
             }
         });
     }
@@ -127,9 +111,9 @@ public class NearbyActivity extends AppCompatActivity {
         ActivityCompat.startActivity(this, intent, null);
     }
 
-    private void renderItems() {
+    private void renderItems(List<? extends RecommendationModel> recommendationModels) {
         adapter.clear();
-        adapter.addAll(databaseHelper.getRecommendations());
+        adapter.addAll(recommendationModels);
         adapter.notifyDataSetChanged();
     }
 }

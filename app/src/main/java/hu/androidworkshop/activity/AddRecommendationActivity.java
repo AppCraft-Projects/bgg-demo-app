@@ -32,6 +32,8 @@ import hu.androidworkshop.places.BuildConfig;
 import hu.androidworkshop.places.R;
 import hu.androidworkshop.places.model.RecommendationModel;
 import hu.androidworkshop.places.model.UserModel;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -200,25 +202,17 @@ public class AddRecommendationActivity extends AppCompatActivity {
             modelToPost.setImageURL(imageUrl);
         }
         GourmetApplication gourmetApplication = (GourmetApplication) getApplication();
-        gourmetApplication.getApiClient().addRestaurant(modelToPost).enqueue(new Callback<RecommendationModel>() {
+        gourmetApplication.getRecommendationsRepository().add(modelToPost, new Function1<RecommendationModel, Unit>() {
             @Override
-            public void onResponse(Call<RecommendationModel> call, Response<RecommendationModel> response) {
-                if (response.isSuccessful()) {
-                    databaseHelper.addRecommendation(response.body());
+            public Unit invoke(RecommendationModel recommendationModel) {
+                if (recommendationModel != null) {
                     Toast.makeText(AddRecommendationActivity.this, R.string.successful_action, Toast.LENGTH_SHORT).show();
                 }
                 if (progressDialog != null && progressDialog.isShowing()) {
                     progressDialog.dismiss();
                 }
                 navigateBack();
-            }
-
-            @Override
-            public void onFailure(Call<RecommendationModel> call, Throwable t) {
-                if (progressDialog != null && progressDialog.isShowing()) {
-                    progressDialog.dismiss();
-                }
-                navigateBack();
+                return null;
             }
         });
     }

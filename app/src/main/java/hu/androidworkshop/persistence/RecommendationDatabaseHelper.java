@@ -84,6 +84,9 @@ public class RecommendationDatabaseHelper extends SQLiteOpenHelper {
     }
 
     public void addRecommendation(RecommendationModel recommendationModel) {
+        if (recommendationModel == null) {
+            return;
+        }
         SQLiteDatabase database = getWritableDatabase();
 
         database.beginTransaction();

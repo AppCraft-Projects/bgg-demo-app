@@ -25,24 +25,8 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.release
-    }
-    buildTypes {
-
-        release {
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
-            buildConfigField "String", "API_BASE_URL", "\"http://192.168.1.225:${apiPortNumber()}/\""
-        }
-        debug {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
-            buildConfigField "String", "API_BASE_URL", "\"http://192.168.1.225:${apiPortNumber()}/\""
-        }
-    }
-
-    productFlavors {
+        proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        buildConfigField "String", "API_BASE_URL", "\"http://192.168.1.225:${apiPortNumber()}/\""
     }
 
     packagingOptions {

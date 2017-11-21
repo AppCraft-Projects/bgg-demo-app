@@ -10,9 +10,15 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import java.util.concurrent.atomic.AtomicReference;
+
+import hu.androidworkshop.GourmetApplication;
 import hu.androidworkshop.persistence.RecommendationDatabaseHelper;
 import hu.androidworkshop.places.R;
 import hu.androidworkshop.places.model.RecommendationModel;
+import hu.androidworkshop.repository.RecommendationRepository;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 
 import static hu.androidworkshop.activity.AddRecommendationActivity.NAVIGATION_FROM_NEARBY;
 
@@ -38,23 +44,34 @@ public class RecommendationDetailActivity extends AppCompatActivity {
 
         fromNearby = getIntent().getBooleanExtra(NAVIGATION_FROM_NEARBY, false);
         int id = getIntent().getIntExtra(RECOMMENDATION_ID_KEY_BUNDLE, -1);
-        RecommendationModel recommendationModel = RecommendationDatabaseHelper.getInstance(this).getRecommendationById(id);
+        final AtomicReference<RecommendationModel> model = new AtomicReference<>();
+        RecommendationRepository recommendationRepository = (RecommendationRepository) ((GourmetApplication)getApplication()).getRecommendationsRepository();
+        recommendationRepository.getById(id, new Function1<RecommendationModel, Unit>() {
+            @Override
+            public Unit invoke(RecommendationModel recommendationModel) {
+                model.set(recommendationModel);
+                bindUI(model);
+                return null;
+            }
+        });
+    }
 
+    private void bindUI(AtomicReference<RecommendationModel> model) {
         TextView placeName = findViewById(R.id.place_name);
-        placeName.setText(recommendationModel.getName());
+        placeName.setText(model.get().getName());
         TextView authorInfo = findViewById(R.id.author_info);
-        String authorInfoText = recommendationModel.getUser().getFirstName() + " " + recommendationModel.getUser().getLastName();
+        String authorInfoText = model.get().getUser().getFirstName() + " " + model.get().getUser().getLastName();
         authorInfo.setText(authorInfoText);
 
         ImageView placePhoto = findViewById(R.id.place_photo);
         Picasso.with(this)
-                .load(recommendationModel.getImageURL())
+                .load(model.get().getImageURL())
                 .placeholder(R.drawable.food)
                 .error(R.drawable.food)
                 .into(placePhoto);
 
         TextView description = findViewById(R.id.place_description);
-        description.setText(recommendationModel.getShortDescription());
+        description.setText(model.get().getShortDescription());
     }
 
     @Override
