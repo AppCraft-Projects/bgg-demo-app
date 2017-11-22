@@ -213,7 +213,7 @@ public class RecommendationDatabaseHelper extends SQLiteOpenHelper {
                         TABLE_USERS,
                         TABLE_RECOMMENDATIONS, KEY_RECOMMENDATION_USER_ID,
                         TABLE_USERS, KEY_USER_ID,
-                        TABLE_USERS, KEY_USER_ID
+                        TABLE_RECOMMENDATIONS, KEY_RECOMMENDATION_ID
                 );
         Cursor cursor = getReadableDatabase().rawQuery(query, new String[]{String.valueOf(id)});
 

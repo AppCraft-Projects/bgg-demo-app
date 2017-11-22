@@ -66,8 +66,8 @@ public class RecommendationDetailActivity extends AppCompatActivity {
         ImageView placePhoto = findViewById(R.id.place_photo);
         Picasso.with(this)
                 .load(model.get().getImageURL())
-                .placeholder(R.drawable.food)
-                .error(R.drawable.food)
+                .placeholder(R.drawable.placeholder)
+                .error(R.drawable.placeholder)
                 .into(placePhoto);
 
         TextView description = findViewById(R.id.place_description);

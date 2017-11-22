@@ -57,8 +57,8 @@ public class NearbyAdapter extends ArrayAdapter<RecommendationModel> {
         if (viewHolder.foodImageView != null) {
             Picasso.with(getContext())
                     .load(recommendation.getImageURL())
-                    .placeholder(R.drawable.food)
-                    .error(R.drawable.food)
+                    .placeholder(R.drawable.placeholder)
+                    .error(R.drawable.placeholder)
                     .into(viewHolder.foodImageView, new Callback() {
                         @Override
                         public void onSuccess() {

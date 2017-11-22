@@ -49,7 +49,7 @@ class RecommendationModel {
         return imageURL
     }
 
-    fun setImageURL(imageURL: String): RecommendationModel {
+    fun setImageURL(imageURL: String?): RecommendationModel {
         this.imageURL = imageURL
         return this
     }
