@@ -1,6 +1,7 @@
 package hu.androidworkshop;
 
 import android.app.Application;
+import android.arch.persistence.room.Room;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -12,9 +13,9 @@ import hu.androidworkshop.json.JsonMapperInterface;
 import hu.androidworkshop.network.BGGApiDefinition;
 import hu.androidworkshop.network.ImageUploader;
 import hu.androidworkshop.network.ImageUploaderInterface;
-import hu.androidworkshop.persistence.RecommendationDatabaseHelper;
+import hu.androidworkshop.persistence.RecommendationDatabase;
+import hu.androidworkshop.persistence.entity.RecommendationEntity;
 import hu.androidworkshop.places.BuildConfig;
-import hu.androidworkshop.places.model.RecommendationModel;
 import hu.androidworkshop.repository.RecommendationRepository;
 import hu.androidworkshop.repository.Repository;
 import okhttp3.OkHttpClient;
@@ -25,9 +26,10 @@ public class GourmetApplication extends Application {
 
     private BGGApiDefinition apiDefinition;
 
-    private Repository<RecommendationModel, Integer> recommendationsRepository;
+    private Repository<RecommendationEntity, Integer> recommendationsRepository;
     private ImageUploaderInterface imageUploader;
     private JsonMapperInterface jsonMapper;
+    private RecommendationDatabase database;
 
     @Override
     public void onCreate() {
@@ -48,12 +50,11 @@ public class GourmetApplication extends Application {
                 .build()
                 .create(BGGApiDefinition.class);
         imageUploader = new ImageUploader(okHttpClient, "image");
-        recommendationsRepository = new RecommendationRepository(apiDefinition, RecommendationDatabaseHelper.getInstance(this));
-        RecommendationDatabaseHelper.getInstance(this).deleteAllPostsAndUsers();
-    }
-
-    public BGGApiDefinition getApiClient() {
-        return apiDefinition;
+        database = Room.databaseBuilder(this, RecommendationDatabase.class, RecommendationDatabase.getDATABASE_NAME())
+                .allowMainThreadQueries()
+                .build();
+        recommendationsRepository = new RecommendationRepository(apiDefinition, database);
+        recommendationsRepository.clear();
     }
 
     public ImageUploaderInterface getImageUploader() {
@@ -64,7 +65,7 @@ public class GourmetApplication extends Application {
         return jsonMapper;
     }
 
-    public Repository<RecommendationModel,Integer> getRecommendationsRepository() {
+    public Repository<RecommendationEntity,Integer> getRecommendationsRepository() {
         return recommendationsRepository;
     }
 }

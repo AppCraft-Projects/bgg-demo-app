@@ -27,16 +27,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import hu.androidworkshop.GourmetApplication;
-import hu.androidworkshop.persistence.RecommendationDatabaseHelper;
+import hu.androidworkshop.persistence.entity.RecommendationEntity;
 import hu.androidworkshop.places.BuildConfig;
 import hu.androidworkshop.places.R;
 import hu.androidworkshop.places.model.RecommendationModel;
 import hu.androidworkshop.places.model.UserModel;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class AddRecommendationActivity extends AppCompatActivity {
 
@@ -56,7 +53,6 @@ public class AddRecommendationActivity extends AppCompatActivity {
     boolean hadImage;
     private RecommendationModel recommendationModel;
     private boolean fromNearby;
-    private RecommendationDatabaseHelper databaseHelper;
     private ProgressDialog progressDialog;
 
     public static Intent newIntent(Activity activity, boolean fromNearby) {
@@ -69,7 +65,6 @@ public class AddRecommendationActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_recommendation);
-        databaseHelper = RecommendationDatabaseHelper.getInstance(this);
         placePhoto = findViewById(R.id.place_photo);
         placeName = findViewById(R.id.place_name);
         authorInfo = findViewById(R.id.author_info);
@@ -201,11 +196,12 @@ public class AddRecommendationActivity extends AppCompatActivity {
         if (hadImage && imageUrl != null) {
             modelToPost.setImageURL(imageUrl);
         }
+        RecommendationEntity entity = new RecommendationEntity(recommendationModel);
         GourmetApplication gourmetApplication = (GourmetApplication) getApplication();
-        gourmetApplication.getRecommendationsRepository().add(modelToPost, new Function1<RecommendationModel, Unit>() {
+        gourmetApplication.getRecommendationsRepository().add(entity, new Function1<RecommendationEntity, Unit>() {
             @Override
-            public Unit invoke(RecommendationModel recommendationModel) {
-                if (recommendationModel != null) {
+            public Unit invoke(RecommendationEntity recommendationEntity) {
+                if (recommendationEntity != null) {
                     Toast.makeText(AddRecommendationActivity.this, R.string.successful_action, Toast.LENGTH_SHORT).show();
                 }
                 if (progressDialog != null && progressDialog.isShowing()) {

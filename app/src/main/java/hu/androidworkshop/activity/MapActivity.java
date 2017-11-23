@@ -32,11 +32,10 @@ import java.util.List;
 
 import hu.androidworkshop.GourmetApplication;
 import hu.androidworkshop.json.JsonMapperInterface;
-import hu.androidworkshop.persistence.RecommendationDatabaseHelper;
+import hu.androidworkshop.persistence.entity.RecommendationEntity;
 import hu.androidworkshop.places.R;
 import hu.androidworkshop.places.model.Coordinate;
 import hu.androidworkshop.places.model.CoordinatesModel;
-import hu.androidworkshop.places.model.RecommendationModel;
 
 import static hu.androidworkshop.activity.RecommendationDetailActivity.RECOMMENDATION_ID_KEY_BUNDLE;
 
@@ -53,7 +52,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
     private GoogleMap map;
-    private List<RecommendationModel> models;
+    private List<RecommendationEntity> models;
     private List<LatLng> coordinates;
 
     @Override
@@ -67,7 +66,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         setTitle(R.string.title_activity_map);
         GourmetApplication application = (GourmetApplication) getApplication();
         jsonMapper = application.getJsonMapper();
-        models = RecommendationDatabaseHelper.getInstance(this).getRecommendations();
+        models = application.getRecommendationsRepository().getAll();
         findViewById(R.id.add_recommendation_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -114,60 +113,64 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         map.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
             @Override
             public void onMapLoaded() {
-                coordinates = new ArrayList<>();
-                InputStream inputStream = null;
-                try {
-                    inputStream = getResources().openRawResource(R.raw.coords);
-                    StringBuilder stringBuilder = new StringBuilder();
-                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-                    String str;
-                    while ((str = bufferedReader.readLine()) != null) {
-                        stringBuilder.append(str).append("\n");
-                    }
-                    CoordinatesModel model = jsonMapper.deserialize(stringBuilder.toString(), CoordinatesModel.class);
-                    for(Coordinate coordinate : model.getCoordinates()) {
-                        coordinates.add(new LatLng(coordinate.getLat(), coordinate.getLon()));
-                    }
-                } catch (IOException e) {
-                    Log.e(TAG, "Error while reading coordinates file", e);
-                } finally {
-                    try {
-                        if (inputStream != null) {
-                            inputStream.close();
-                        }
-                    } catch (IOException e) {
-                        Log.e(TAG, "Error while closing the coordinates file :D", e);
-                    }
-                }
-                Drawable markerIcon = getDrawable(R.drawable.ic_room_black_24dp);
-
-                markerIcon.setTint(getResources().getColor(R.color.colorPrimary));
-                Canvas canvas = new Canvas();
-                Bitmap bitmap = Bitmap.createBitmap(markerIcon.getIntrinsicWidth(), markerIcon.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-                canvas.setBitmap(bitmap);
-                markerIcon.setBounds(0, 0, markerIcon.getIntrinsicWidth(), markerIcon.getIntrinsicHeight());
-                markerIcon.draw(canvas);
-                BitmapDescriptor marker = BitmapDescriptorFactory.fromBitmap(bitmap);
-                LatLngBounds.Builder builder = LatLngBounds.builder();
-                LatLng latLngTmp;
-                RecommendationModel modelTmp;
-                for (int i = 0; i < models.size(); i++) {
-                    latLngTmp = coordinates.get(i);
-                    modelTmp = models.get(i);
-
-                    MarkerOptions markerOptions = new MarkerOptions()
-                            .position(latLngTmp)
-                            .title(modelTmp.getName())
-                            .icon(marker)
-                            .draggable(false)
-                            .snippet(String.valueOf(modelTmp.getId()))
-                            .visible(true);
-                    builder.include(latLngTmp);
-                    map.addMarker(markerOptions);
-                }
-                latLngBounds = builder.build();
-                map.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 15));
+                addPins();
             }
         });
+    }
+
+    private void addPins() {
+        coordinates = new ArrayList<>();
+        InputStream inputStream = null;
+        try {
+            inputStream = getResources().openRawResource(R.raw.coords);
+            StringBuilder stringBuilder = new StringBuilder();
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+            String str;
+            while ((str = bufferedReader.readLine()) != null) {
+                stringBuilder.append(str).append("\n");
+            }
+            CoordinatesModel model = jsonMapper.deserialize(stringBuilder.toString(), CoordinatesModel.class);
+            for(Coordinate coordinate : model.getCoordinates()) {
+                coordinates.add(new LatLng(coordinate.getLat(), coordinate.getLon()));
+            }
+        } catch (IOException e) {
+            Log.e(TAG, "Error while reading coordinates file", e);
+        } finally {
+            try {
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+            } catch (IOException e) {
+                Log.e(TAG, "Error while closing the coordinates file :D", e);
+            }
+        }
+        Drawable markerIcon = getDrawable(R.drawable.ic_room_black_24dp);
+
+        markerIcon.setTint(getResources().getColor(R.color.colorPrimary));
+        Canvas canvas = new Canvas();
+        Bitmap bitmap = Bitmap.createBitmap(markerIcon.getIntrinsicWidth(), markerIcon.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        canvas.setBitmap(bitmap);
+        markerIcon.setBounds(0, 0, markerIcon.getIntrinsicWidth(), markerIcon.getIntrinsicHeight());
+        markerIcon.draw(canvas);
+        BitmapDescriptor marker = BitmapDescriptorFactory.fromBitmap(bitmap);
+        LatLngBounds.Builder builder = LatLngBounds.builder();
+        LatLng latLngTmp;
+        RecommendationEntity modelTmp;
+        for (int i = 0; i < models.size(); i++) {
+            latLngTmp = coordinates.get(i);
+            modelTmp = models.get(i);
+
+            MarkerOptions markerOptions = new MarkerOptions()
+                    .position(latLngTmp)
+                    .title(modelTmp.getName())
+                    .icon(marker)
+                    .draggable(false)
+                    .snippet(String.valueOf(modelTmp.getId()))
+                    .visible(true);
+            builder.include(latLngTmp);
+            map.addMarker(markerOptions);
+        }
+        latLngBounds = builder.build();
+        map.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 15));
     }
 }

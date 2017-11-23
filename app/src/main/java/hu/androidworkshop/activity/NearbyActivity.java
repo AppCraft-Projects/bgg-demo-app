@@ -19,9 +19,8 @@ import java.util.List;
 
 import hu.androidworkshop.GourmetApplication;
 import hu.androidworkshop.adapter.NearbyAdapter;
-import hu.androidworkshop.persistence.RecommendationDatabaseHelper;
+import hu.androidworkshop.persistence.entity.RecommendationEntity;
 import hu.androidworkshop.places.R;
-import hu.androidworkshop.places.model.RecommendationModel;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 
@@ -31,8 +30,7 @@ public class NearbyActivity extends AppCompatActivity {
 
     private static final String TAG = NearbyActivity.class.getClass().getSimpleName();
 
-    private ArrayAdapter<RecommendationModel> adapter;
-    private RecommendationDatabaseHelper databaseHelper;
+    private ArrayAdapter<RecommendationEntity> adapter;
     private ProgressDialog progressDialog;
     private GourmetApplication application;
 
@@ -57,8 +55,6 @@ public class NearbyActivity extends AppCompatActivity {
                 startActivity(AddRecommendationActivity.newIntent(NearbyActivity.this, true));
             }
         });
-
-        databaseHelper = RecommendationDatabaseHelper.getInstance(this);
         ListView listView = findViewById(R.id.places_listview);
 
         adapter = new NearbyAdapter(this);
@@ -89,9 +85,9 @@ public class NearbyActivity extends AppCompatActivity {
         if (!progressDialog.isShowing()) {
             progressDialog.show();
         }
-        application.getRecommendationsRepository().getAll(new Function1<List<? extends RecommendationModel>, Unit>() {
+        application.getRecommendationsRepository().getAllAsync(new Function1<List<? extends RecommendationEntity>, Unit>() {
             @Override
-            public Unit invoke(List<? extends RecommendationModel> recommendationModels) {
+            public Unit invoke(List<? extends RecommendationEntity> recommendationModels) {
                 if (progressDialog.isShowing()) {
                     progressDialog.dismiss();
                 }
@@ -105,13 +101,13 @@ public class NearbyActivity extends AppCompatActivity {
         });
     }
 
-    public void itemClicked(RecommendationModel recommendation, View view) {
+    public void itemClicked(RecommendationEntity recommendation, View view) {
         Intent intent = RecommendationDetailActivity.newIntent(this, true);
         intent.putExtra(RECOMMENDATION_ID_KEY_BUNDLE, recommendation.getId());
         ActivityCompat.startActivity(this, intent, null);
     }
 
-    private void renderItems(List<? extends RecommendationModel> recommendationModels) {
+    private void renderItems(List<? extends RecommendationEntity> recommendationModels) {
         adapter.clear();
         adapter.addAll(recommendationModels);
         adapter.notifyDataSetChanged();

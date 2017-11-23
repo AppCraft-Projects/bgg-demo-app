@@ -13,9 +13,8 @@ import com.squareup.picasso.Picasso;
 import java.util.concurrent.atomic.AtomicReference;
 
 import hu.androidworkshop.GourmetApplication;
-import hu.androidworkshop.persistence.RecommendationDatabaseHelper;
+import hu.androidworkshop.persistence.entity.RecommendationEntity;
 import hu.androidworkshop.places.R;
-import hu.androidworkshop.places.model.RecommendationModel;
 import hu.androidworkshop.repository.RecommendationRepository;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
@@ -44,11 +43,11 @@ public class RecommendationDetailActivity extends AppCompatActivity {
 
         fromNearby = getIntent().getBooleanExtra(NAVIGATION_FROM_NEARBY, false);
         int id = getIntent().getIntExtra(RECOMMENDATION_ID_KEY_BUNDLE, -1);
-        final AtomicReference<RecommendationModel> model = new AtomicReference<>();
+        final AtomicReference<RecommendationEntity> model = new AtomicReference<>();
         RecommendationRepository recommendationRepository = (RecommendationRepository) ((GourmetApplication)getApplication()).getRecommendationsRepository();
-        recommendationRepository.getById(id, new Function1<RecommendationModel, Unit>() {
+        recommendationRepository.getByIdAsync(id, new Function1<RecommendationEntity, Unit>() {
             @Override
-            public Unit invoke(RecommendationModel recommendationModel) {
+            public Unit invoke(RecommendationEntity recommendationModel) {
                 model.set(recommendationModel);
                 bindUI(model);
                 return null;
@@ -56,7 +55,7 @@ public class RecommendationDetailActivity extends AppCompatActivity {
         });
     }
 
-    private void bindUI(AtomicReference<RecommendationModel> model) {
+    private void bindUI(AtomicReference<RecommendationEntity> model) {
         TextView placeName = findViewById(R.id.place_name);
         placeName.setText(model.get().getName());
         TextView authorInfo = findViewById(R.id.author_info);
@@ -65,7 +64,7 @@ public class RecommendationDetailActivity extends AppCompatActivity {
 
         ImageView placePhoto = findViewById(R.id.place_photo);
         Picasso.with(this)
-                .load(model.get().getImageURL())
+                .load(model.get().getImageUrl())
                 .placeholder(R.drawable.placeholder)
                 .error(R.drawable.placeholder)
                 .into(placePhoto);

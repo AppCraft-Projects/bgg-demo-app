@@ -15,10 +15,10 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import hu.androidworkshop.activity.NearbyActivity;
+import hu.androidworkshop.persistence.entity.RecommendationEntity;
 import hu.androidworkshop.places.R;
-import hu.androidworkshop.places.model.RecommendationModel;
 
-public class NearbyAdapter extends ArrayAdapter<RecommendationModel> {
+public class NearbyAdapter extends ArrayAdapter<RecommendationEntity> {
 
     private static final String TAG = NearbyAdapter.class.getSimpleName();
 
@@ -29,7 +29,7 @@ public class NearbyAdapter extends ArrayAdapter<RecommendationModel> {
     @NonNull
     @Override
     public View getView(final int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        final RecommendationModel recommendation = getItem(position);
+        final RecommendationEntity recommendation = getItem(position);
 
         ViewHolder viewHolder = null;
         if (convertView == null) {
@@ -56,7 +56,7 @@ public class NearbyAdapter extends ArrayAdapter<RecommendationModel> {
 
         if (viewHolder.foodImageView != null) {
             Picasso.with(getContext())
-                    .load(recommendation.getImageURL())
+                    .load(recommendation.getImageUrl())
                     .placeholder(R.drawable.placeholder)
                     .error(R.drawable.placeholder)
                     .into(viewHolder.foodImageView, new Callback() {
@@ -66,7 +66,7 @@ public class NearbyAdapter extends ArrayAdapter<RecommendationModel> {
 
                         @Override
                         public void onError() {
-                            Log.e(TAG, "Error downloading image from " + recommendation.getImageURL());
+                            Log.e(TAG, "Error downloading image from " + recommendation.getImageUrl());
                         }
             });
         }

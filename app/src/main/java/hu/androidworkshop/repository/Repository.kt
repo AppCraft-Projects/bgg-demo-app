@@ -1,53 +1,68 @@
 package hu.androidworkshop.repository
 
 import hu.androidworkshop.network.BGGApiDefinition
-import hu.androidworkshop.persistence.RecommendationDatabaseHelper
-import hu.androidworkshop.places.model.RecommendationModel
+import hu.androidworkshop.persistence.RecommendationDatabase
+import hu.androidworkshop.persistence.entity.RecommendationEntity
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 interface Repository<T, in IdType> {
-    fun getAll(callback: (List<T>?) -> Unit)
-    fun getById(id: IdType, callback: (T?) -> Unit)
+    fun getAll() : List<T>
+    fun getAllAsync(callback: (List<T>?) -> Unit)
+    fun getById(id: IdType) : T
+    fun getByIdAsync(id: IdType, callback: (T?) -> Unit)
     fun add(item: T, callback:(T?) -> Unit)
+    fun clear()
 }
 
-class RecommendationRepository(private val apiService: BGGApiDefinition, private val databaseHelper: RecommendationDatabaseHelper) : Repository<RecommendationModel, Int> {
-    override fun getById(id: Int, callback: (RecommendationModel?) -> Unit) {
-        val recommendation = databaseHelper.getRecommendationById(id)
+class RecommendationRepository(private val apiService: BGGApiDefinition, private val database: RecommendationDatabase) : Repository<RecommendationEntity, Int> {
+
+    override fun getAll(): List<RecommendationEntity> = database.getRecommendationsDao().getAll()
+
+    override fun getByIdAsync(id: Int, callback: (RecommendationEntity?) -> Unit) {
+        val recommendation = database.getRecommendationsDao().getById(id)
         callback(recommendation)
     }
 
-    override fun add(item: RecommendationModel, callback: (RecommendationModel?) -> Unit) {
-        apiService.addRestaurant(item).enqueue(object: Callback<RecommendationModel>{
-            override fun onFailure(call: Call<RecommendationModel>?, t: Throwable?) {
+    override fun getById(id: Int): RecommendationEntity =
+            database.getRecommendationsDao().getById(id)
+
+    override fun add(item: RecommendationEntity, callback: (RecommendationEntity?) -> Unit) {
+        apiService.addRestaurant(item).enqueue(object: Callback<RecommendationEntity>{
+            override fun onFailure(call: Call<RecommendationEntity>?, t: Throwable?) {
                 callback(null)
             }
 
-            override fun onResponse(call: Call<RecommendationModel>?, response: Response<RecommendationModel>?) {
-                databaseHelper.addRecommendation(response?.body())
-                callback(response?.body())
+            override fun onResponse(call: Call<RecommendationEntity>?, response: Response<RecommendationEntity>?) {
+                val recommendationEntity = response?.body()!!
+                database.getRecommendationsDao().add(recommendationEntity)
+                callback(recommendationEntity)
             }
 
         })
     }
 
-    override fun getAll(callback: (List<RecommendationModel>?) -> Unit) {
-        apiService.getRecommendations().enqueue(object: Callback<List<RecommendationModel>>{
-            override fun onFailure(call: Call<List<RecommendationModel>>?, t: Throwable?) {
+    override fun getAllAsync(callback: (List<RecommendationEntity>?) -> Unit) {
+        apiService.getRecommendations().enqueue(object: Callback<List<RecommendationEntity>>{
+            override fun onFailure(call: Call<List<RecommendationEntity>>?, t: Throwable?) {
                 callback(null)
             }
 
-            override fun onResponse(call: Call<List<RecommendationModel>>?, response: Response<List<RecommendationModel>>?) {
+            override fun onResponse(call: Call<List<RecommendationEntity>>?, response: Response<List<RecommendationEntity>>?) {
                 val items = response?.body()
-                for (item in items!!) {
-                    databaseHelper.addRecommendation(item)
+                Thread().run {
+                    items?.forEach { database.getRecommendationsDao().add(it) }
+                    callback(items)
                 }
-                callback(items)
             }
-
         })
     }
 
+    override fun clear() {
+        Thread().run {
+            val entities = database.getRecommendationsDao().getAll()
+            database.getRecommendationsDao().deleteAll(entities)
+        }
+    }
 }
