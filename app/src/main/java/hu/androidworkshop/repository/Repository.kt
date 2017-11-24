@@ -60,9 +60,6 @@ class RecommendationRepository(private val apiService: BGGApiDefinition, private
     }
 
     override fun clear() {
-        Thread().run {
-            val entities = database.getRecommendationsDao().getAll()
-            database.getRecommendationsDao().deleteAll(entities)
-        }
+        database.getRecommendationsDao().deleteAll()
     }
 }
