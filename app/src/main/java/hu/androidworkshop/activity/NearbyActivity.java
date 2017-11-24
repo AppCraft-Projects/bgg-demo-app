@@ -2,6 +2,7 @@ package hu.androidworkshop.activity;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.arch.lifecycle.Observer;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -85,18 +86,10 @@ public class NearbyActivity extends AppCompatActivity {
         if (!progressDialog.isShowing()) {
             progressDialog.show();
         }
-        application.getRecommendationsRepository().getAllAsync(new Function1<List<? extends RecommendationEntity>, Unit>() {
+        application.getRecommendationsRepository().getAllReactive().observe(this, new Observer<List<RecommendationEntity>>() {
             @Override
-            public Unit invoke(List<? extends RecommendationEntity> recommendationModels) {
-                if (progressDialog.isShowing()) {
-                    progressDialog.dismiss();
-                }
-                if (recommendationModels == null) {
-                    Log.e(TAG, "Error while fetching recommendations");
-                } else {
-                    renderItems(recommendationModels);
-                }
-                return null;
+            public void onChanged(@Nullable List<RecommendationEntity> recommendationEntities) {
+                renderItems(recommendationEntities);
             }
         });
     }
@@ -108,6 +101,9 @@ public class NearbyActivity extends AppCompatActivity {
     }
 
     private void renderItems(List<? extends RecommendationEntity> recommendationModels) {
+        if (progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
         adapter.clear();
         adapter.addAll(recommendationModels);
         adapter.notifyDataSetChanged();
