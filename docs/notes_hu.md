@@ -401,7 +401,7 @@ Ennyi!
 
 Van még itt nekünk egy fogós problémánk. Miért van az, hogy a legtöbb Android fejlesztő azzal kezd egy új appot, hogy letiltja az alkalmazás elforgathatóságát? Nos, a válasz a konfiguráció változás. Ahogy forgatjuk az appot az *Activity*-k létrejönnek, élnek, meghalnak. Valahogy így...
 
-![alt text](https://raw.githubusercontent.com/AppCraft-Projects/bgg-demo-app/docs/docs/img/lifecycle.png "Android Lifecycle")
+<img src="https://raw.githubusercontent.com/AppCraft-Projects/bgg-demo-app/docs/docs/img/lifecycle.png" width="420">
 
 Nos, ez az adatbázis kezelés szempontjából nem kifejezetten optimális működés, sok pazarláshoz vezethet. Konkrétan számos költséges lekérdezés megismétléséhez. Avagy minden egyes alkalommal, amikor elforgatja a felhasználó a telefont.
 
