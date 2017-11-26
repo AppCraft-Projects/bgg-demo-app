@@ -15,7 +15,7 @@ Előtte azonban ki szeretném fejteni, hogy mivel foglalkozunk mi itt.
 
 Ugye a workshop munkacíme az *Android Refactor*. Minden olyan projekt esetében, ami évek óta tart, óhatatlanul eljön az a pont, amikor is a kódbázis elég erősen rozsdásodni kezd. Megjelennek ilyen-olyan rossz megoldások a kódban.
 
-**[KÉRDÉS]** Ugye nem kell ezt túlmagyaráznom, tegye fel a kezét, aki még nem találkozott ilyennel! :) - Nyugi, Ti majd még fogtok. :)
+**[KÉRDÉS]** Ugye nem kell ezt túlmagyaráznom, tegye fel a kezét, aki még nem találkozott ilyennel! :) - Nyugi, Ti majd még fogtok. 😀
 
 Szóval, hoztunk magunkkal egy példakódot, ami kapcsán Tibi tényleg beleadott mindent, igazi, fasza, tákolmány. Mindenek előtt ezt fogjuk megismerni.
 
