@@ -143,7 +143,7 @@ koncepciókat.
 
 ### MVC
 
-![alt text](https://raw.githubusercontent.com/AppCraft-Projects/bgg-demo-app/docs/docs/img/mvc.png "MVC")
+<img src="https://raw.githubusercontent.com/AppCraft-Projects/bgg-demo-app/docs/docs/img/mvc.png" width="300">
 
 A 80-as években a *SmallTalk*kal terjedt el igazán, majd sokan átvették az ötletet. Az *Objective-C* és a *Cocoa* keretrenszer fejlesztői különösen sokat inspirálódtak belőle. Így szivárgott át később a *CocoaTouch*-ba, avagy az *iOS* fejlesztők eszköztárába is. Ezt követően persze sok más terülekre is átszivárgott.
 
@@ -157,7 +157,7 @@ Ilyesfajta állapot szinkronizálásához szépen passzolhat egy *Data Binding* 
 
 ### MVP
 
-![alt text](https://raw.githubusercontent.com/AppCraft-Projects/bgg-demo-app/docs/docs/img/mvp.png "MVP")
+<img src="https://raw.githubusercontent.com/AppCraft-Projects/bgg-demo-app/docs/docs/img/mvp.png" width="300">
 
 A fő cél, hogy a logika minél nagyobb részét kivigyük a viewból.
 
@@ -173,7 +173,7 @@ Ez pedig a tesztelésnél válik igazán hasznossá, nem kell a valós Androidos
 
 ### MVVM
 
-![alt text](https://raw.githubusercontent.com/AppCraft-Projects/bgg-demo-app/docs/docs/img/mvvm.png "MVVM")
+<img src="https://raw.githubusercontent.com/AppCraft-Projects/bgg-demo-app/docs/docs/img/mvvm.png" width="300">
 
 A harmadik és egyúttal utolsó az *MVVM*, ez is egy klasszikus minta. Valahol az előző kettő közötti megoldásról van szó.
 
@@ -225,7 +225,8 @@ Bevezettek tehát néhány architektúrális komponenst / fogalmat:
 * **Lifecycle Observer**
 
 Így néz ki az architektúra ajánlása egészében:
-![alt text](https://raw.githubusercontent.com/AppCraft-Projects/bgg-demo-app/docs/docs/img/architecture-components-full.png "Full Android Architecture Recommendation")
+
+<img src="https://raw.githubusercontent.com/AppCraft-Projects/bgg-demo-app/docs/docs/img/architecture-components-full.png" width="420">
 
 Külön-külön is használhatóak ezek a komponensek, de együtt lesz igazán érdekes. Ezt egyelőre csak felületesen veszem át, de rövidesen részeltesebben is ránézek az egyes részekre.
 
@@ -237,7 +238,7 @@ Ezekből szeretném egyelőre átvenni veletek az *Android Architecture Componen
 
 Kezdjük a bal alsó sarokban a *Room*-nál, ez pedig egy *SQL-Java* mappelő könyvtár. Mindössze ennyit csinálunk majd vele.
 
-![alt text](https://raw.githubusercontent.com/AppCraft-Projects/bgg-demo-app/docs/docs/img/appui_room.png "Full Android Architecture Recommendation")
+<img src="https://raw.githubusercontent.com/AppCraft-Projects/bgg-demo-app/docs/docs/img/appui_room.png" width="420">
 
 Mindössze két “új” fogalmat kell majd itt memorizálnotok:
 
@@ -304,7 +305,8 @@ Figyeld meg az első három funkciót, mindháromnál megjelenik a User objektum
 Valamint *@Query* után szereplő parancsok folyamatosan ellenőrizve vannak fordítási időben, egész érthető hibaüzeneteket ad az *Android Studio*, ha valami nem stimmel.
 
 Tegyük fel, hogy egy sima elgépelés történt: ￼
-![alt text](https://raw.githubusercontent.com/AppCraft-Projects/bgg-demo-app/docs/docs/img/room-error.png "Room error in IDE")
+
+<img src="https://raw.githubusercontent.com/AppCraft-Projects/bgg-demo-app/docs/docs/img/room-error.png" width="420">
 
 Egyelőre ennyit akartam a Roomról mondani, rövidesen visszatérünk rá részletesebben is.
 
@@ -315,7 +317,8 @@ Lépjünk egyet tovább, tegyük fel, hogy egy tisztességes reaktív alkalmazá
 > A *LiveData* tömören egy megfigyelhető (*observable*) adat tároló. Értesíti a megfigyelőket (observers), amikor valami adatváltozás történik. Így azok frissíthetik az alkalmazás UI-át.
 
 Így illeszkedik ez a komponenens a mi kis egyszerű alkalmazásunkba...
-![alt text](https://raw.githubusercontent.com/AppCraft-Projects/bgg-demo-app/docs/docs/img/livedata-appui-room-twoway.png "App UI and Room binding through Live Data")
+
+<img src="https://raw.githubusercontent.com/AppCraft-Projects/bgg-demo-app/docs/docs/img/livedata-appui-room-twoway.png" width="420">
 
 A használatához mindössze két egyszerű új osztályt kell memorizálnotok:
 
@@ -339,7 +342,8 @@ Tehát...
 3. frissíted a UI-t.
 
 Valahogy így lehet ezt vizualizálni szépen: ￼
-![alt text](https://raw.githubusercontent.com/AppCraft-Projects/bgg-demo-app/docs/docs/img/livedata-thursday.png "Live Data Thursday example")
+
+<img src="https://raw.githubusercontent.com/AppCraft-Projects/bgg-demo-app/docs/docs/img/livedata-thursday.png" width="420">
 
 Ha meg akarod változtatni az értékét, mindössze ennyi egy metódust kell hívnod:
 
@@ -348,7 +352,8 @@ dayOfWeek.setValue(“Friday”);
 ```
 
 Ez is vizualizálva: ￼
-![alt text](https://raw.githubusercontent.com/AppCraft-Projects/bgg-demo-app/docs/docs/img/livedata-friday.png "Live Data Friday example")
+
+<img src="https://raw.githubusercontent.com/AppCraft-Projects/bgg-demo-app/docs/docs/img/livedata-friday.png" width="420">
 
 Ami igazán király, hogy a *Room* teljes mértékben támogatja a *LiveData* komponenst. Rendkívül egyszerű rávenni, hogy *LiveData*-t adjon vissza, mindössze a *DAO* objektum visszatérési típusát kell finomhangolni.
 
@@ -388,7 +393,7 @@ userLiveData.observe(this, users -> {
 2. frissül a *LiveData*,
 3. a *UI* is értesítve lesz az eseményről, így az szintén frissülhet.
 
-![alt text](https://raw.githubusercontent.com/AppCraft-Projects/bgg-demo-app/docs/docs/img/livedata-appui-room-oneway.png "Full Android Architecture Recommendation")
+<img src="https://raw.githubusercontent.com/AppCraft-Projects/bgg-demo-app/docs/docs/img/livedata-appui-room-oneway.png" width="420">
 
 Ennyi!
 
@@ -400,11 +405,11 @@ Van még itt nekünk egy fogós problémánk. Miért van az, hogy a legtöbb And
 
 Nos, ez az adatbázis kezelés szempontjából nem kifejezetten optimális működés, sok pazarláshoz vezethet. Konkrétan számos költséges lekérdezés megismétléséhez. Avagy minden egyes alkalommal, amikor elforgatja a felhasználó a telefont.
 
-![alt text](https://raw.githubusercontent.com/AppCraft-Projects/bgg-demo-app/docs/docs/img/lifecycle-database.png "Android Lifecycle with Database connection points")
+<img src="https://raw.githubusercontent.com/AppCraft-Projects/bgg-demo-app/docs/docs/img/lifecycle-database.png" width="420">
 
 Ezt lehet kicselezni a *ViewModel*-eket, bevezetünk egy újabb réteget, amelynek az életciklusa különáll az *Activity*-től. Túléli az elforgatások hatását, avagy az *Activity*-k létrejöttét és megsemmisítését.
 
-![alt text](https://raw.githubusercontent.com/AppCraft-Projects/bgg-demo-app/docs/docs/img/lifecycle-viewmodel.png "Android Lifecycle with ViewModel")
+<img src="https://raw.githubusercontent.com/AppCraft-Projects/bgg-demo-app/docs/docs/img/lifecycle-viewmodel.png" width="420">
 
 > Tehát, röviden összefoglalva a *View* model egy olyan objektum, amely adatot szolgáltat a *UI komponenseknek, és túléli a konfiguráció változásokat.
 
@@ -459,13 +464,14 @@ Lássuk a lépéseket sorban:
 * Végül utolsó lépésként azon belül frissítjük a *UI*-t.
 
 Összefoglalva ezt csináltuk most: ￼
-![alt text](https://raw.githubusercontent.com/AppCraft-Projects/bgg-demo-app/docs/docs/img/lifecycle-viewmodel-explanation.png "Android Lifecycle with ViewModel and Explanation")
+
+<img src="https://raw.githubusercontent.com/AppCraft-Projects/bgg-demo-app/docs/docs/img/lifecycle-viewmodel-explanation.png" width="420">
 
 Okos, igaz?
 
 Itt tartunk tehát most a nagy képből, ennyit kínál az *Android Architecture Components*, de ki fogjuk egészíteni a még szükséges komponensekkel. ￼
 
-![alt text](https://raw.githubusercontent.com/AppCraft-Projects/bgg-demo-app/docs/docs/img/architecture-components-without-networking.png "Android Architecture Components figure without networking")
+<img src="https://raw.githubusercontent.com/AppCraft-Projects/bgg-demo-app/docs/docs/img/architecture-components-without-networking.png" width="420">
 
 ## Kotlin alapok
 
@@ -497,7 +503,7 @@ Mind sokat bizonyított, maximálisan érett könyvtárak, és együtt mostanra 
 
 ### OkHttp
 
-![alt text](https://raw.githubusercontent.com/AppCraft-Projects/bgg-demo-app/docs/docs/img/okhttp.png "How OkHttp works?")
+<img src="https://raw.githubusercontent.com/AppCraft-Projects/bgg-demo-app/docs/docs/img/okhttp.png" width="420">
 
 Kifejezetten alacsony szintű könyvtárról van szó, az *Android* alap *HTTP* stackét cseréli ki egy modernebbre. A következő néhány előnnyel jár:
 
@@ -561,8 +567,7 @@ Ami így néz ki:
 
 Ismétlésként, a View model egy olyan objektum, amely adatot szolgáltat a *UI* komponenseknek, és túléli a konfiguráció változásokat. Ennyi, semmi több. ￼
 
-![alt text](https://raw.githubusercontent.com/AppCraft-Projects/bgg-demo-app/docs/docs/img/lifecycle-activity-viewmodel.png "Android Lifecycle with ViewModel and Rotations")
-
+<img src="https://raw.githubusercontent.com/AppCraft-Projects/bgg-demo-app/docs/docs/img/lifecycle-activity-viewmodel.png" width="420">
 
 [TODO] Mutass valami béna példát.
 
@@ -592,7 +597,8 @@ Persze igazán komplex alkalmazások esetében tovább lehet lépni egy *MVP* mi
 Extrém esetben még tovább is lehet menni.
 
 Így néz ki egyben ez az egész: ￼
-![alt text](https://raw.githubusercontent.com/AppCraft-Projects/bgg-demo-app/docs/docs/img/architecture-components-summary.png "Android Lifecycle with ViewModel and Rotations")
+
+<img src="https://raw.githubusercontent.com/AppCraft-Projects/bgg-demo-app/docs/docs/img/architecture-components-summary.png" width="420">
 
 Van itt egy trükkös rész, a *ViewModel* konstruktor alapból nem kap semmi paramtért, ha szeretnéd, akkor erre két módszerrel van lehetőséged:
 
@@ -601,7 +607,7 @@ Van itt egy trükkös rész, a *ViewModel* konstruktor alapból nem kap semmi pa
 
 **FONTOS!** Soha, de soha ne tárolj *Activity*, Fragment vagy View referenciákat, illetve azok *Context*-ét a *ViewModel*ben. Ezekből lesznek a csúnya memory leak-ek. Avagy olyan dolgot tartunk majd a memóriában, amit már egyébként megsemmisített a keretrendszer. Ezek egyébként csúnya kivételeket is tudnak majd dobálni.
 
-![alt text](https://raw.githubusercontent.com/AppCraft-Projects/bgg-demo-app/docs/docs/img/lifecycle-activity-viewmodel-memory-leak.png "Android Lifecycle with ViewModel and Memory Leak")
+<img src="https://raw.githubusercontent.com/AppCraft-Projects/bgg-demo-app/docs/docs/img/lifecycle-activity-viewmodel-memory-leak.png" width="420">
 
 Ha mégis szükség lenne egy *ApplicationContext*re, akkor használd az AndroidViewModel osztályt, az megoldja ezt neked.
 
@@ -614,11 +620,11 @@ A következő stratégiát érdemes követni adattárolás szempontjából:
 * **ViewModel**: minden adat, amit aktuális az *Activity UI*-on meg akarok jeleníteni.
 * **onSaveInstance()**: vészhelyzet esetén az adott Activity UI visszaállításához a lehetős legkisebb adatok. Pl egy *UserDetail* képernyő esetében elég a *User*-hez tartozó *id*.
 
-![alt text](https://raw.githubusercontent.com/AppCraft-Projects/bgg-demo-app/docs/docs/img/stores.png "Android Lifecycle with ViewModel and Memory Leak")
+<img src="https://raw.githubusercontent.com/AppCraft-Projects/bgg-demo-app/docs/docs/img/stores.png" width="420">
 
 ￼Végül pedig van arra lehetőség, hogy egy *ViewModel* használatával megosszatok adatokat Fragmentek között. Ezt csak mint érdekesség említettem meg, nem fogjuk részleteiban tárgyalni, javaslom azonban a hivatalos doksik böngészését.
 
-![alt text](https://raw.githubusercontent.com/AppCraft-Projects/bgg-demo-app/docs/docs/img/viewmodel-fragments.png "ViewModel with Fragments")
+<img src="https://raw.githubusercontent.com/AppCraft-Projects/bgg-demo-app/docs/docs/img/viewmodel-fragments.png" width="420">
 
 ￼[TODO] Saját kódot bemásolgatni. 
 
@@ -628,7 +634,8 @@ A következő stratégiát érdemes követni adattárolás szempontjából:
 
 Ismételjünk kicsit. A *LiveData* tömören egy megfigyelhető (*observable*) adat tároló. Értesíti a megfigyelőket (*observers*), amikor valami adatváltozás történik. Így azok frissíthetik az alkalmazás *UI*-át.
 
-![alt text](https://raw.githubusercontent.com/AppCraft-Projects/bgg-demo-app/docs/docs/img/livedata-observes.png "ViewModel with Fragments")
+<img src="https://raw.githubusercontent.com/AppCraft-Projects/bgg-demo-app/docs/docs/img/livedata-observes.png" width="420">
+
 
 Egy fontos részletet azonban nem tárgyaltunk korábban, ez pedig a teljes életciklus témakör. Három fogalommal érdemes itt tisztában lenni:
 
@@ -639,7 +646,7 @@ Egy fontos részletet azonban nem tárgyaltunk korábban, ez pedig a teljes éle
 **A *Support Library 26.1*-től kezdődően az *Activity* és *Fragment* osztályok implementálják a *LifecycleOwner*-t.**
 
 Így néz ez ki: ￼
-![alt text](https://raw.githubusercontent.com/AppCraft-Projects/bgg-demo-app/docs/docs/img/livedata-observes-notifies.png "LiveData and Activity, observes and notifies")
+<img src="https://raw.githubusercontent.com/AppCraft-Projects/bgg-demo-app/docs/docs/img/livedata-observes-notifies.png" width="420">
 
 Az ide tartozó kódot pedig ismeritek a korábbi példából:
 
@@ -656,7 +663,7 @@ Itt az *Activity*-ben az az *observe* hívást pont ezt a monitorozást váltja 
 
 **FONTOS**, hogy amikor egy *Activity* megsemmisül, akkor ez a monitorozás is végetér, nem lesz semmi csintalan leak, neked pedig ehhez semmit sem kell tenned.
 
-![alt text](https://raw.githubusercontent.com/AppCraft-Projects/bgg-demo-app/docs/docs/img/livedata-unsubscibe.png "ViewModel with Fragments")
+<img src="https://raw.githubusercontent.com/AppCraft-Projects/bgg-demo-app/docs/docs/img/livedata-unsubscibe.png" width="420">
 
 ￼Több módja is van egy *LiveData* értékének a módosítására:
 
