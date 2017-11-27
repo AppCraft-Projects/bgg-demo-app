@@ -418,7 +418,7 @@ Ismét három új osztályt / fogalmat kell memorizálni:
 * *AndroidViewModel*,
 * és *ViewModelProvider*.
 
-Lássuk a példát. Először is örökölni kell a *TrailListViewModelből*:
+Lássuk a példát. Először is örökölni kell a *UserListViewModelből*:
 
 ```java
 public class UserListViewModel extends AndroidViewModel { 
@@ -484,15 +484,78 @@ Itt tartunk tehát most a nagy képből, ennyit kínál az *Android Architecture
 
 Érdemes egy kicsit ízlelgetni a kódot, amit a legacy változat esetében látunk.
 
-[TODO] Másold be a kódot a legacy verzióból.
+```java
+public class GetRecomendationTask extends AsyncTask<Void,Void,List<RecommendationModel>> {
 
-Mennyire hosszú kódot és hány osztályt használunk ahhoz, hogy letöltsünk egy sima *JSON* formátumú adatot egy szerverről, majd átalakítsuk azt a megfelelő formátumra?
+  private ProgressDialog progressDialog;
 
-*AsnycTask*, *HTTPURLConnection*, *JSONObject*, és még számos más osztályt alkalmazunk itt.
+  public GetRecomendationTask(AppCompatActivity appCompatActivity) {
+    progressDialog = new ProgressDialog(appCompatActivity);
+    progressDialog.setIndeterminate(true);
+  }
 
-[TODO] fejtsd ki röviden mit csinálnak az egyes részek.
+  @Override
+  protected void onPreExecute() {
+    super.onPreExecute();
+    if (!progressDialog.isShowing()) {
+      progressDialog.show();
+    }
+  }
 
-Alapvetően egyszerű és kifejezetten repetatív feladatot végzünk itt, de kód egyrészt nem egyszerű, másrészt csupa boilerplate.
+  @Override
+  protected void onPostExecute(List<RecommendationModel> recommendationModels) {
+    super.onPostExecute(recommendationModels);
+    if (progressDialog.isShowing()) {
+      progressDialog.dismiss();
+    }
+    NearbyActivity.this.renderItems();
+  }
+
+  @Override
+  protected List<RecommendationModel> doInBackground(Void... voids) {
+    List<RecommendationModel> result = new ArrayList<>();
+    String resultString;
+    String inputLine;
+    try {
+      HttpURLConnection connection = (HttpURLConnection) new URL("http://192.168.1.225:8080/restaurants").openConnection();
+      connection.setRequestMethod("GET");
+      connection.setReadTimeout(15000);
+      connection.setConnectTimeout(15000);
+
+      connection.connect();
+      //Create a new InputStreamReader
+      InputStreamReader streamReader = new InputStreamReader(connection.getInputStream());
+      //Create a new buffered reader and String Builder
+      BufferedReader reader = new BufferedReader(streamReader);
+      StringBuilder stringBuilder = new StringBuilder();
+      //Check if the line we are reading is not null
+      while((inputLine = reader.readLine()) != null){
+        stringBuilder.append(inputLine);
+      }
+
+      //Close our InputStream and Buffered reader
+      reader.close();
+      streamReader.close();
+      
+      //Set our result equal to our stringBuilder
+      resultString = stringBuilder.toString();
+
+      JSONArray resultArray = new JSONArray(resultString);
+      for (int i = 0; i < resultArray.length(); i++) {
+        RecommendationModel model = new RecommendationModel(resultArray.getJSONObject(i));
+        databaseHelper.addRecommendation(model);
+      }
+    } catch (IOException | JSONException e) {
+      Log.e(TAG, e.getMessage(), e);
+    }
+    return result;
+  }
+}
+```
+
+Mennyire hosszú kódot és hány osztályt használunk ahhoz, hogy letöltsünk egy sima *JSON* formátumú adatot egy szerverről, majd átalakítsuk azt a megfelelő formátumra? *AsnycTask*, *HTTPURLConnection*, *JSONArray*, és még számos más osztályt alkalmazunk itt.
+
+Alapvetően nem nehéz, de kifejezetten repetatív feladatot végzünk, és sok a boilerplate. Felteszem ezt többségében ismeritek.
 
 ### Lehet ezt jobban is
 
@@ -516,6 +579,16 @@ Olyan szinten elterjedt könyvtárról van szó, hogy az Android framework csapa
 
 Az alacsony szinthez viszonyítva kifejezetten egyszerű a használata, de előlünk a mélyebb részeket el fogja rejteni a *Retrofit*.
 
+Mindössze egy OkHttpClientet kell konfigurálnunk:
+
+```kotlin
+OkHttpClient okHttpClient = new OkHttpClient.Builder()
+  .writeTimeout(60L, TimeUnit.SECONDS)
+  .readTimeout(60L, TimeUnit.SECONDS)
+  .connectTimeout(60L, TimeUnit.SECONDS)
+  .build();
+```
+
 ### Retrofit
 
 Térjünk ki erre részletesebben, ez a könyvtár nagyságrendekkel egyszerűbbé teszi a *REST API*-k kezelését. A kód maga sokkal rövidebb és könnyebben értelmezhető lesz.
@@ -524,11 +597,49 @@ Két dolgot kell majd magadnak csinálni, definiálni kell a *Retrofit*tel egy s
 
 Szépen be tudod kötni ebbe *HTTP* kliensként az *OkHttp*-t, illetve számos konvertert is, így számos formátumból mappelhető lesz az adat.
 
-[TODO] Mutasd meg, hogy néz ki a REST API, jó lenne erről egy kép. [TODO] Mutasd meg a Retrofit inteface-t.
+[TODO] mutasd meg a saját REST API-t
 
-[TODO] Építsd fel OkHttp-vel és GSON-nel.
+Így néz ki a REST API lefedve az OkHttp-vel:
+```kotlin
+interface BGGApiDefinition {
+    @GET("restaurants")
+    fun getRecommendations() : Call<List<RecommendationEntity>>
 
-Még egy apóság, ez az inferace egyébként kifejezetten egyszerűen generálható, mondjuk egy *Swagger* doksiból.
+    @POST("restaurants")
+    fun addRestaurant(@Body recommendation : RecommendationEntity) : Call<RecommendationEntity>
+}
+```
+
+A beállítása is ugyanennyire egyszerű, az előzőekben előkészített OkHttpClient mellett kell egy Gson objektum, és úgy már minden sinen lesz:
+```kotlin
+Gson gson = new GsonBuilder().create();
+jsonMapper = new JsonMapper(gson);
+
+apiDefinition = new Retrofit.Builder()
+  .addConverterFactory(GsonConverterFactory.create(gson))
+  .client(okHttpClient)
+  .baseUrl(BuildConfig.API_BASE_URL)
+  .build()
+  .create(BGGApiDefinition.class);
+```
+
+Végül pedig használható: 
+```kotlin
+apiService.getRecommendations().enqueue(object: Callback<List<RecommendationEntity>> {
+    override fun onFailure(call: Call<List<RecommendationEntity>>?, t: Throwable?) {
+        Log.e(TAG.toString(), "Cannot fetch recommendations from network.", t)
+    }
+
+    override fun onResponse(call: Call<List<RecommendationEntity>>?, response: Response<List<RecommendationEntity>>?) {
+        val items = response?.body()
+        // ...
+    }
+})
+```
+
+Fontos lekezelni a sikeres (onResponse) és sikertelen (onFailure) eseteket egyaránt, ugye mindkét esetben másképp kell eljárni.
+
+Még egy apóság, ez az inferface egyébként kifejezetten egyszerűen generálható, mondjuk egy *Swagger* doksiból.
 
 ### Picasso
 
@@ -541,9 +652,53 @@ Még egy puzzle darab azért hiányzik nekünk. Szükségünk lesz képek kezel�
 
 Mindezt hagyományos módon piszkosul melós lenne lekódolni. Jó lenne, ha ezt valami frankón elfedné előlünk. Na mindezt hozza a *Picasso*.
 
-[TODO] Mutasd az ide kapcsolódó legacy kódot.
+[TODO] Korábban volt ugye egy saját implementáció erre, ami így nézett ki.
+```java
+public class ImageCache {
 
-[TODO] Mutasd az új kódot.
+    private static final ImageCache ourInstance = new ImageCache();
+
+    public static ImageCache getInstance() {
+        return ourInstance;
+    }
+
+    private ImageCache() {
+    }
+
+    private Map<String,Bitmap> cache = new HashMap<>();
+
+    public void put(String url, Bitmap bitmap) {
+        if (!cache.containsKey(url)) {
+            cache.put(url, bitmap);
+        }
+    }
+
+    public Bitmap get(String url) {
+        if (cache.containsKey(url)) {
+            return cache.get(url);
+        }
+        return null;
+    }
+
+    public boolean contains(String url) {
+        return cache.containsKey(url);
+    }
+}
+```
+
+A használatánál is oda kellett azért figyelni, nem iazán rejtetette el a részleteket, és akár ki is maradhattak részletek:
+```java
+if (!ImageCache.getInstance().contains(recommendation.getImageURL())) {
+    new DownloadImageTask(viewHolder.foodImageView).execute(recommendation.getImageURL());
+} else {
+    viewHolder.foodImageView.setImageBitmap(ImageCache.getInstance().get(recommendation.getImageURL()));
+}
+```
+
+
+Nem kifejezetten bonyolult a kód, viszont nem fed le mindent, amit elvártunk tőle, ezen még azért dolgozni kellene.
+
+Helyette inkább bevezetjük a Picassot
 
 Látványosan egyszerűbb így, ugye.
 
