@@ -1,5 +1,9 @@
 # Room
 
+## Itt tartunk most
+
+<img src="https://raw.githubusercontent.com/AppCraft-Projects/bgg-demo-app/docs/docs/img/architecture-components-full-room.png" width="420">
+
 ## Mi a Room?
 
 Kezdjük a bal alsó sarokban a *Room*-nál, ez pedig egy *SQL-Java* mappelő könyvtár. Mindössze ennyit csinálunk majd vele.

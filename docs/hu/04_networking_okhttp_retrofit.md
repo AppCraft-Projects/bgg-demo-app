@@ -1,6 +1,10 @@
 # A hálózati komponens refaktorálása Retrofittel
 
-# Ahonnan indulunk....
+## Itt tartunk most
+
+<img src="https://raw.githubusercontent.com/AppCraft-Projects/bgg-demo-app/docs/docs/img/architecture-components-full-networking.png" width="420">
+
+## Ahonnan indulunk....
 
 Érdemes egy kicsit ízlelgetni a kódot, amit a legacy változat esetében látunk.
 

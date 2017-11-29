@@ -1,5 +1,9 @@
 # LiveData
 
+## Itt tartunk most
+
+<img src="https://raw.githubusercontent.com/AppCraft-Projects/bgg-demo-app/docs/docs/img/architecture-components-full-livedata.png" width="420">
+
 ## Mi a LiveData?
 Lépjünk egyet tovább, tegyük fel, hogy egy tisztességes reaktív alkalmazást akarunk építeni, ez esetben jól fog jönni a *LiveData*, a második architektúra komponensünk. Ezzel monitorozhatóak a adatváltozások az adatbázisban.
 

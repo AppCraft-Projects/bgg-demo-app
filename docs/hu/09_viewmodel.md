@@ -1,5 +1,9 @@
 # ViewModel
 
+## Itt tartunk most
+
+<img src="https://raw.githubusercontent.com/AppCraft-Projects/bgg-demo-app/docs/docs/img/architecture-components-full-viewmodel.png" width="420">
+
 ## Néhány bevezető gondolat
 
 Van még itt nekünk egy fogós problémánk. Miért van az, hogy a legtöbb Android fejlesztő azzal kezd egy új appot, hogy letiltja az alkalmazás elforgathatóságát? Nos, a válasz a konfiguráció változás. Ahogy forgatjuk az appot az *Activity*-k létrejönnek, élnek, meghalnak. Valahogy így...
@@ -110,7 +114,7 @@ Itt az *Activity*-ben az az *observe* hívást pont ezt a monitorozást váltja 
 
 <img src="https://raw.githubusercontent.com/AppCraft-Projects/bgg-demo-app/docs/docs/img/livedata-unsubscibe.png" width="420">
 
-## Itt tartunk most
+## Összeállt, amit mára terveztünk
 
 Itt tartunk tehát most a nagy képből, ennyit kínál az *Android Architecture Components*, de ki fogjuk egészíteni a még szükséges komponensekkel. ￼
 

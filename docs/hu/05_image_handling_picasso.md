@@ -1,5 +1,9 @@
 # Képkezelés refaktorálása Picassoval
 
+## Itt tartunk most
+
+<img src="https://raw.githubusercontent.com/AppCraft-Projects/bgg-demo-app/docs/docs/img/architecture-components-full-networking.png" width="420">
+
 ## Pár gondolat előzetesen
 
 Még egy puzzle darab azért hiányzik nekünk. Szükségünk lesz képek kezelésére is, de ez nem egyszerű történet, le kell fedni számos use-caset:
