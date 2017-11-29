@@ -638,7 +638,8 @@ apiService.getRecommendations().enqueue(object: Callback<List<RecommendationEnti
         Log.e(TAG.toString(), "Cannot fetch recommendations from network.", t)
     }
 
-    override fun onResponse(call: Call<List<RecommendationEntity>>?, response: Response<List<RecommendationEntity>>?) {
+    override fun onResponse(call: Call<List<RecommendationEntity>>?, 
+                            response: Response<List<RecommendationEntity>>?) {
         val items = response?.body()
         // ...
     }
