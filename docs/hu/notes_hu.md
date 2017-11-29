@@ -24,14 +24,16 @@ Majd azt követően számos lépésben rendbe fogjuk vágni ezt a kódot:
 * Honnan jövünk?
 * Hol tartunk most?
 * Kotlin alapozó
-* Networking
-* Repository
-* Room
-* Live Data
-* ViewModell
-* Lifecycle kezelése Owner / Observer
-* A View réteg feldarabolása kis komponensekre
-* Navigation
+* Android Architecture Components
+  * Networking (OkHttp, Retrofit, Picasso)
+  * Repository
+  * Room
+  * Live Data
+  * ViewModel
+
+[TODO] Figyelj a tartalomjegyzés sorrendjére, aszerint mozgasd át a témákat.
+
+[TODO] Térj ki arra, hogy miért Kotlin és miért Android Architecture Components
 
 Tibivel mi alapvetően egy két napos workshopot dolgoztunk, annak látjátok most egy tömörített változatát. Persze sok rész kimaradt, kevesebbet dolgoztok Ti, ellenben mi többet dumálunk. 
 
@@ -103,13 +105,18 @@ Ismét a web-es példából szeretnék kiindulni, egy sima JSON-t akarok letölt
 
 Két gyors kérdés... 
 
+
+[TODO] ezeket vigyük előrébb, korábban kérdezzük meg, bemutatkozás után 
+
 **[KÉRDÉS]** Hány Android fejlesztő van köztetek a teremben? 
 
 **[KÉRDÉS]** Oké, látom a többség jó helyen jár! De mivel foglalkoztok TI, akik nem nyújtottátok fel a kezeteket? :)
 
+
+
 Innentől pedig a lényegre térek! Az *Android* fejlesztés nehéz, ugye? Próbáltatok összerakni egyszerűbb appokat mondjuk *Angular*ral, *React*tal vagy *Vue*val, az valahogy sokkal egyszerűbben indul egész.
 
-Feladat | Web | Android 
+Feladat | Web | Android m
 ------- | --- | -------                      
 Hello World | Egyszerű | Egyszerű 
 Adat letöltés és megjelenítés | Egyszerű | Trükkös 
@@ -153,6 +160,8 @@ Talán a lényeges szempont, amiben ténylegesen eltér a többi megoldástól, 
 Ez pedig kínálja a lehetőséget egy megfigyelő (*observer*) minta valamilyenféle megvalósítására. Avagy ha változik bármi az alsó domain adat Modelben, az visszaszinkronizálható a *View*-ra.
 
 Ilyesfajta állapot szinkronizálásához szépen passzolhat egy *Data Binding* is, erre az *Android* kínál is egy normális megoldást, ami az *XML* leíróból is elérhető.
+
+**Megjegyzés**: Ez az iOS változat volt, a macOS féle változat esetében még direktebb a binding.
 
 ### MVP
 
@@ -613,7 +622,6 @@ interface BGGApiDefinition {
 A beállítása is ugyanennyire egyszerű, az előzőekben előkészített OkHttpClient mellett kell egy Gson objektum, és úgy már minden sinen lesz:
 ```kotlin
 Gson gson = new GsonBuilder().create();
-jsonMapper = new JsonMapper(gson);
 
 apiDefinition = new Retrofit.Builder()
   .addConverterFactory(GsonConverterFactory.create(gson))
@@ -686,7 +694,7 @@ public class ImageCache {
 }
 ```
 
-A használatánál is oda kellett azért figyelni, nem iazán rejtetette el a részleteket, és akár ki is maradhattak részletek:
+A használatánál is oda kellett azért figyelni, nem iazán rejtetette el a részleteket. Ráadásul azért maradtak is ki részletek.
 ```java
 if (!ImageCache.getInstance().contains(recommendation.getImageURL())) {
     new DownloadImageTask(viewHolder.foodImageView).execute(recommendation.getImageURL());
@@ -695,27 +703,30 @@ if (!ImageCache.getInstance().contains(recommendation.getImageURL())) {
 }
 ```
 
+Picassora átállni azonban kvázi fájdalommentes, és a kimaradt use caseket is szépen lefedi:
+
+```kotlin
+Picasso.with(getContext())
+  .load(recommendation.getImageURL())
+  .placeholder(R.drawable.food)
+  .error(R.drawable.food)
+  .into(viewHolder.foodImageView, new Callback() {
+      @Override
+      public void onSuccess() {
+      }
+
+      @Override
+      public void onError() {
+          Log.e(TAG, "Error downloading image from " + recommendation.getImageURL());
+      }
+});
+```
 
 Nem kifejezetten bonyolult a kód, viszont nem fed le mindent, amit elvártunk tőle, ezen még azért dolgozni kellene.
 
-Helyette inkább bevezetjük a Picassot
+Helyette inkább bevezetjük a Picassot.
 
 Látványosan egyszerűbb így, ugye.
-
-## Repository
-
-Már csak egy utolsó lépés van hátra, szeretnénk, ha a hálózat, illetve az adatbázis, illetve így összességében az adatok kezelése nem az *Activity*-ben foglalna helyet. Szeretnénk, ha ezek a részek még jobban elkülönülnének.
-
-[TODO] Mutasd a régi kódot.
-
-Ehhez pedig egy fontos lépés a Repository bevezetése, ami épp ezeket fogja össze. Egyébként egy rendkívül egyszerű komponensről van szó, tényleg nincs benne semmi nagy csavar, mindössze egy pici logika.
-
-Ami így néz ki:
-
-* Használja a lokálisan perzisztált adatot, ha még adott időkereten belül van.
-* Egyébként próbáljon meg frissebbet letölteni. Arról már az *OkHttp* és a szerver együttesen képesek gondoskodni, ha nem áll rendekezésre a cacheltnél frissebb adat.
-
-[TODO] Mutasd az új kódot.
 
 ## ViewModel
 
@@ -723,7 +734,6 @@ Ismétlésként, a View model egy olyan objektum, amely adatot szolgáltat a *UI
 
 <img src="https://raw.githubusercontent.com/AppCraft-Projects/bgg-demo-app/docs/docs/img/lifecycle-activity-viewmodel.png" width="420">
 
-[TODO] Mutass valami béna példát.
 
 Másrészt segít pár fokkal jobban betartani a *Single Responsibility Patternt*. Erre azért van szükség, mert a legtöbb *Activity* esetében túl sok felelősség van egymásra halmozva, és ennek következtében szépen meg is tud hízni.
 
@@ -843,6 +853,15 @@ A későbbiekben előfordulhat az, hogy manipulálni / transzformálni szeretné
 * **MediatorLiveData** - több *LiveData* összefuttatásához. Pl adatbázisból és hálózatról.
 
 [TODO] Jöhetnek a saját kódok
+
+## Repository
+
+Következő lépésben szeretnénk, ha az adatok kezelése nem az *Activity*-ben foglalna helyet. Létrehozunk egy Repositority-t, ahova a hálózat kezelést kiszervezzük és később az adatbázis kezelést is ide fogjuk tenni. Egyébként egy rendkívül egyszerű komponensről van szó, tényleg nincs benne semmi nagy csavar, mindössze egy pici logika.
+
+Így fog kinézni, amikor teljesen összeáll:
+
+* Használja a lokálisan perzisztált adatot, ha még adott időkereten belül van.
+* Egyébként próbáljon meg frissebbet letölteni. Arról már az *OkHttp* és a szerver együttesen képesek gondoskodni, ha nem áll rendekezésre a cacheltnél frissebb adat.
 
 ## Room
 
