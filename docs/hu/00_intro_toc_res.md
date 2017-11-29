@@ -20,17 +20,17 @@ Tehát nagy anyagról van szó, ezért arra törekedtünk, hogy napi munkában l
 
 A következő témákról lesz tehát szó a következő órákban:
 
-- [A legacy kód áttekintése](https://github.com/AppCraft-Projects/appcraft-kotlin-workshop/blob/master/docs/hu/01_convert_from_java.md)
-- [Android keretrendszer, régen és most](https://github.com/AppCraft-Projects/appcraft-kotlin-workshop/blob/master/docs/hu/02_java_interop.md)
-- [Kotlin gyorstalpaló](https://github.com/AppCraft-Projects/appcraft-kotlin-workshop/blob/master/docs/hu/03_data_classes.md)
-- [Networking komponens átalakítása OkHttp-vel és Retrofit-tel](https://github.com/AppCraft-Projects/appcraft-kotlin-workshop/blob/master/docs/hu/04_immutability_and_copy.md)
-- [Képkezelő komponens átalakítása Picasso-val](https://github.com/AppCraft-Projects/appcraft-kotlin-workshop/blob/master/docs/hu/07_nullability.md)
-- [Repository komponens rétebevezetése](https://github.com/AppCraft-Projects/appcraft-kotlin-workshop/blob/master/docs/hu/05_type_inference_any_nothing.md)
-- [Adatbáziskezelő komponens átalakítása Room-al](https://github.com/AppCraft-Projects/appcraft-kotlin-workshop/blob/master/docs/hu/06_expression_statement_if_and_when.md)
-- [LiveData komponens bevezetése](https://github.com/AppCraft-Projects/appcraft-kotlin-workshop/blob/master/docs/hu/08_functions.md)
-- [Activity életciklus javítása ViewModel-el](https://github.com/AppCraft-Projects/appcraft-kotlin-workshop/blob/master/docs/hu/09_extension_functions.md)
-- [Linkgyűjtemény](https://github.com/AppCraft-Projects/appcraft-kotlin-workshop/blob/master/docs/hu/15_links.md)
-- [Mi maradt ki?](https://github.com/AppCraft-Projects/appcraft-kotlin-workshop/blob/master/docs/hu/14_missing.md)
+- [A legacy kód áttekintése](https://github.com/AppCraft-Projects/bgg-demo-app/blob/docs/docs/hu/01_legacy_code.md)
+- [Android keretrendszer, régen és most](https://github.com/AppCraft-Projects/bgg-demo-app/blob/docs/docs/hu/02_android_fw_musings.md)
+- [Kotlin gyorstalpaló](https://github.com/AppCraft-Projects/bgg-demo-app/blob/docs/docs/hu/03_kotlin_basics.md)
+- [Networking komponens átalakítása OkHttp-vel és Retrofit-tel](https://github.com/AppCraft-Projects/bgg-demo-app/blob/docs/docs/hu/04_networking_okhttp_retrofit.md)
+- [Képkezelő komponens átalakítása Picasso-val](https://github.com/AppCraft-Projects/bgg-demo-app/blob/docs/docs/hu/05_image_handling_picasso.md)
+- [Repository komponens rétebevezetése](https://github.com/AppCraft-Projects/bgg-demo-app/blob/docs/docs/hu/06_repository.md)
+- [Adatbáziskezelő komponens átalakítása Room-al]https://github.com/AppCraft-Projects/bgg-demo-app/blob/docs/docs/hu/07_room.md)
+- [LiveData komponens bevezetése](https://github.com/AppCraft-Projects/bgg-demo-app/blob/docs/docs/hu/08_livedata.md)
+- [Activity életciklus javítása ViewModel-el](https://github.com/AppCraft-Projects/bgg-demo-app/blob/docs/docs/hu/09_viewmodel.md)
+- [Linkgyűjtemény](https://github.com/AppCraft-Projects/bgg-demo-app/blob/docs/docs/hu/10_links.md)
+- [Ami kimaradt...](https://github.com/AppCraft-Projects/bgg-demo-app/blob/docs/docs/hu/11_missing_topics.md)
 - Q&A
 
 Egyébként olyan lesz az egész, mintha egy repülőgépet menet közben építenénk át, apránként cseréljük ki a részeket, és mindezt úgy, hogy az alkalmazás mindig működőképes maradjon.
