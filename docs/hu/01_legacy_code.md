@@ -15,39 +15,35 @@ Rengeteg dolog van egyben az *Activity*-ben, nem szeparáljuk a felelősségi k�
 * *Networking* és *AsyncTask* bele a kellős közepébe
 * *Adatbázis* kezelés
 
-### .findViewById()
+## .onCreate()
 
 **Hol vagyunk?** *NearbyActivity.onCreate()*
 
-Ez jelen helyzeztben nem vészes, lehetne durvább is, láttam osztályokat ahol 15-20-30 elemet is kötöttek be így. 
+A *findViewById()* jelen helyzeztben nem vészes, lehetne durvább is, láttam osztályokat ahol 15-20-30 elemet is kötöttek be így. 
 
-Ami viszont már zavaróbb, hogy 
+Ami ellenben már zavaróbb, hogy az onCreate()-ben számos más felelősség kör is megjelenik, ezzel mindenképp kezdeni kell majd valamit.
 
-### AsyncTask:
+## AsyncTask:
 
-Hol vagyunk? *NearbyActivity* és azon belül *GetRecomendationTask*.
+**Hol vagyunk?** *NearbyActivity > GetRecomendationTask*
 
-Benne az *Activity* közepébe, egészen zseniális.
+Egy *AsyncTask* az *Activity* kellős közepében, ezzel számos probléma lehet.
 
-[TODO] Miért nem szeretjük az AsncyTaskokat? [TODO] Hogyan lehet másképp csinálni?
+* Alapvetően nem komplikált konstrukció, de könnyen be lehet nézni dolgokat, trükkös.
+* Számos memory leak bújhat meg itt, például hivatkozások az Activity-be.
+* Konfiguráció váltás, az *Activity* lifecycle változás számos problémát okozhat.
+* Túl sok AsyncTask indítása esetében megtelik a queue, ez pedig crash-ez vezet.
 
-### HttpURLConnection
+## HttpURLConnection
 
-**Hol vagyunk?** *doInBackground* metódus
+**Hol vagyunk?** *NearbyActivity > GetRecomendationTask > doInBackground()*
 
-Ismét a web-es példából szeretnék kiindulni, egy sima JSON-t akarok letölteni, de ez kb 40 sor kódot fog eredményezni.
+JSON-t akarok letölteni egy REST API-ról, de ez nagyjából 40 sor kódot igényel. Csúnya, nehezen átlátható, és számos apró csapdát rejt.
 
-[TODO] Emelj még ki néhány csúnya megoldást! Beszélj erről Tibivel 
+## Database handling
 
-[TODO] Hogyan lehet másképp csinálni?
+**Hol vagyunk?** *RecommendationDatabaseHelper*
 
-## Tekintsünk a múltba...
+Ismét egy AsyncTask, erről már írtam feljebb. 
 
-Két gyors kérdés... 
-
-
-[TODO] ezeket vigyük előrébb, korábban kérdezzük meg, bemutatkozás után 
-
-**[KÉRDÉS]** Hány Android fejlesztő van köztetek a teremben? 
-
-**[KÉRDÉS]** Oké, látom a többség jó helyen jár! De mivel foglalkoztok TI, akik nem nyújtottátok fel a kezeteket? :)
+Egészen pici SQL queryket írunk, de ehhez képest rendkívül hosszú az eredmény. A sok string konkatencáció miatt nem tud segíteni az IDE, és az elgépelések csak futási időben jönnek ki. Számos apró hiba rejtőzhet ebben, amit nehéz kiszúrni.
