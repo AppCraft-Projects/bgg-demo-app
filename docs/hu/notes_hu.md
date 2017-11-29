@@ -419,7 +419,7 @@ Ezt lehet kicselezni a *ViewModel*-eket, bevezetünk egy újabb réteget, amelyn
 
 <img src="https://raw.githubusercontent.com/AppCraft-Projects/bgg-demo-app/docs/docs/img/lifecycle-viewmodel.png" width="420">
 
-> Tehát, röviden összefoglalva a *View* model egy olyan objektum, amely adatot szolgáltat a *UI komponenseknek, és túléli a konfiguráció változásokat.
+> Tehát, röviden összefoglalva a *ViewModel* egy olyan objektum, amely adatot szolgáltat a *UI komponenseknek*, és túléli a konfiguráció változásokat.
 
 Ismét három új osztályt / fogalmat kell memorizálni:
 
